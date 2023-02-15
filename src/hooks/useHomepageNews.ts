@@ -55,14 +55,22 @@ export const useHomepageNews = ({
         }
         setData(
           groupBy(
-            clusteredData.sort((a, b) => a.id - b.id),
+            clusteredData.sort(
+              (a, b) =>
+                new Date(b.created_at).getHours() -
+                  new Date(a.created_at).getHours() || a.id - b.id
+            ),
             "source_id"
           )
         );
       } else {
         setData(
           groupBy(
-            data.sort((a, b) => a.id - b.id),
+            data.sort(
+              (a, b) =>
+                new Date(b.created_at).getHours() -
+                  new Date(a.created_at).getHours() || a.id - b.id
+            ),
             "source_id"
           )
         );

@@ -25,6 +25,13 @@ type Props = {
 const PUBLIC_STORAGE_URL =
   "https://nvpoxnhyhnoxikpasiwv.supabase.co/storage/v1/object/public/washington-post-screenshots";
 
+const dateFormatOptions = {
+  weekday: "long",
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+};
+
 const NewsList = ({
   newsData,
   newsTitle,
@@ -36,6 +43,19 @@ const NewsList = ({
       <h3 className="font-bold mb-8">{newsTitle}</h3>
       {/* TODO: type news  */}
       {newsData?.map((news: any) => {
+        const createdAt = new Date(news.created_at).toLocaleDateString(
+          "en-us",
+          {
+            weekday: "long",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            timeZone: "EST",
+          }
+        );
+
         return (
           <div className="mb-3" key={news.id}>
             <div
@@ -44,6 +64,7 @@ const NewsList = ({
             >
               {news.title}
             </div>
+            <div className="text-gray-400">{createdAt} EST</div>
             <img src={`${PUBLIC_STORAGE_URL}/${newsSource}/${news.id}.jpeg`} />
           </div>
         );
