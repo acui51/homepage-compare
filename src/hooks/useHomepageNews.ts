@@ -17,7 +17,7 @@ export const useHomepageNews = ({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const fetchHomepageNews = async (isClustering: boolean) => {
+  const fetchHomepageNews = async (query: string) => {
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -31,7 +31,7 @@ export const useHomepageNews = ({
 
       const reqBody = {
         inputs: {
-          source_sentence: searchValue,
+          source_sentence: query,
           sentences: data.map((datum) => {
             let text = datum.title;
             if (datum.description) text += ` ${datum.description}`;
@@ -40,7 +40,7 @@ export const useHomepageNews = ({
         },
       };
 
-      if (isClustering) {
+      if (!!query) {
         const res = await fetch("/api/similarSentences", {
           method: "POST",
           body: JSON.stringify(reqBody),
@@ -75,7 +75,7 @@ export const useHomepageNews = ({
   };
 
   useEffect(() => {
-    fetchHomepageNews(searchValue.length > 0 ? true : false);
+    fetchHomepageNews(searchValue);
   }, [lowerBoundDate, upperBoundDate]);
 
   return { data, loading, error, refetch: fetchHomepageNews };

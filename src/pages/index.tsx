@@ -23,6 +23,11 @@ export default function Home() {
     searchValue,
   });
 
+  const handleArticleClick = (value: string) => {
+    setSearchValue(value);
+    refetch(value);
+  };
+
   if (error) {
     return <div>Error...</div>;
   }
@@ -33,7 +38,7 @@ export default function Home() {
       <Input.Search
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
-        onSearch={(value) => (value === "" ? refetch(false) : refetch(true))}
+        onSearch={(value) => refetch(value)}
         className="w-96 mb-8"
       />
       <h3 className="font-bold">Dates:</h3>
@@ -56,6 +61,7 @@ export default function Home() {
               newsData={data["the-washington-post"]}
               newsTitle="The Washington Post"
               newsSource="the-washington-post"
+              onArticleClick={handleArticleClick}
             />
           </div>
           <div className="w-1/3 ">
@@ -63,6 +69,7 @@ export default function Home() {
               newsData={data["wsj"]}
               newsTitle="The Wall Street Journal"
               newsSource="wsj"
+              onArticleClick={handleArticleClick}
             />
           </div>
           <div className="w-1/3 ">
@@ -70,6 +77,7 @@ export default function Home() {
               newsData={data["fox-news"]}
               newsTitle="Fox News"
               newsSource="fox-news"
+              onArticleClick={handleArticleClick}
             />
           </div>
         </div>
