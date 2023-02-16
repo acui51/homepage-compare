@@ -1,4 +1,4 @@
-import { groupBy } from "@/utils/groupBy";
+import { groupByDate, groupByKey } from "@/utils/groupBy";
 import { useEffect, useState } from "react";
 import { supabase } from "supabase";
 
@@ -53,27 +53,26 @@ export const useHomepageNews = ({
             clusteredData.push(data[i]);
           }
         }
-        setData(
-          groupBy(
-            clusteredData.sort(
-              (a, b) =>
-                new Date(b.created_at).getHours() -
-                  new Date(a.created_at).getHours() || a.id - b.id
-            ),
-            "source_id"
-          )
+
+        const dataGroupedBySource = groupByKey(
+          clusteredData.sort(
+            (a, b) =>
+              new Date(b.created_at).getHours() -
+                new Date(a.created_at).getHours() || a.id - b.id
+          ),
+          "source_id"
         );
+        setData(groupByDate(dataGroupedBySource));
       } else {
-        setData(
-          groupBy(
-            data.sort(
-              (a, b) =>
-                new Date(b.created_at).getHours() -
-                  new Date(a.created_at).getHours() || a.id - b.id
-            ),
-            "source_id"
-          )
+        const dataGroupedBySource = groupByKey(
+          data.sort(
+            (a, b) =>
+              new Date(b.created_at).getHours() -
+                new Date(a.created_at).getHours() || a.id - b.id
+          ),
+          "source_id"
         );
+        setData(groupByDate(dataGroupedBySource));
       }
     } catch (error) {
       setError(error as string);

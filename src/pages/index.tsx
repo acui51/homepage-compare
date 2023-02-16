@@ -64,7 +64,7 @@ export default function Home() {
               onArticleClick={handleArticleClick}
             />
           </div>
-          <div className="w-1/3 ">
+          <div className="w-1/3">
             <NewsList
               newsData={data["wsj"]}
               newsTitle="The Wall Street Journal"
@@ -72,7 +72,7 @@ export default function Home() {
               onArticleClick={handleArticleClick}
             />
           </div>
-          <div className="w-1/3 ">
+          <div className="w-1/3">
             <NewsList
               newsData={data["fox-news"]}
               newsTitle="Fox News"
