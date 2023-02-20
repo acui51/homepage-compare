@@ -27,6 +27,11 @@ type NewsStackProps = {
    * source id of news website scraped from
    */
   newsSource: string;
+
+  /**
+   * URL address of wordmark logo for news source
+   */
+  newsTitleMedia: string;
 };
 
 const NewsStack = ({
@@ -102,6 +107,11 @@ type NewsListProps = {
   newsData: any | undefined;
 
   /**
+   * URL address of wordmark logo for news source
+   */
+  newsTitleMedia: string;
+
+  /**
    * title of news source
    */
   newsTitle: string;
@@ -120,15 +130,17 @@ type NewsListProps = {
 const NewsList = ({
   newsData,
   newsTitle,
+  newsTitleMedia,
   newsSource,
   onArticleClick,
 }: NewsListProps) => {
   return (
     <Fragment>
-      <h3 className="font-bold mb-8">{newsTitle}</h3>
+      {/* aspect fit tailwind.css */}
+      <img alt={newsTitle} src={newsTitleMedia} className="object-contain h-24 container mx-auto" />
       {/* TODO: type news  */}
       {newsData ? (
-        Object.keys(newsData).map((date: any) => {
+        Object.keys(newsData).map((date: any, index: number) => {
           const createdAt = new Date(date).toLocaleDateString("en-us", {
             weekday: "long",
             year: "numeric",
@@ -140,12 +152,13 @@ const NewsList = ({
           });
 
           return (
-            <div className="relative mb-12">
+            <div className="relative mb-12" key={index}>
               <div className="text-gray-500">{createdAt} EST</div>
               <NewsStack
                 newsHour={newsData[date]}
                 createdAt={createdAt}
                 newsSource={newsSource}
+                newsTitleMedia={newsTitleMedia}
                 onArticleClick={onArticleClick}
               />
             </div>
