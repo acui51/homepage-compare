@@ -34,54 +34,56 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center p-24 min-h-screen">
-      <h3 className="font-bold">Search:</h3>
-      <Input.Search
-        value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
-        onSearch={(value) => refetch(value)}
-        className="w-96 mb-8"
-      />
-      <h3 className="font-bold">Dates:</h3>
-      <DatePicker.RangePicker
-        defaultValue={[
-          dayjs(dateRange.lowerBoundDate),
-          dayjs(dateRange.upperBoundDate),
-        ]}
-        showTime={{ format: "HH:mm" }}
-        format="YYYY-MM-DD HH:mm"
-        onOk={onOk}
-        className="w-96 mb-8"
-      />
-      {loading ? (
-        <Spin />
-      ) : (
-        <div className="flex gap-4 w-full">
-          <div className="w-1/3">
-            <NewsList
-              newsData={data["the-washington-post"]}
-              newsTitle="The Washington Post"
-              newsSource="the-washington-post"
-              onArticleClick={handleArticleClick}
-            />
+      <div className="max-w-7xl flex flex-col items-center">
+        <h3 className="font-bold">Search:</h3>
+        <Input.Search
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          onSearch={(value) => refetch(value)}
+          className="w-96 mb-8"
+        />
+        <h3 className="font-bold">Dates:</h3>
+        <DatePicker.RangePicker
+          defaultValue={[
+            dayjs(dateRange.lowerBoundDate),
+            dayjs(dateRange.upperBoundDate),
+          ]}
+          showTime={{ format: "HH:mm" }}
+          format="YYYY-MM-DD HH:mm"
+          onOk={onOk}
+          className="w-96 mb-8"
+        />
+        {loading ? (
+          <Spin />
+        ) : (
+          <div className="flex gap-4 w-full">
+            <div className="w-1/3">
+              <NewsList
+                newsData={data["the-washington-post"]}
+                newsTitle="The Washington Post"
+                newsSource="the-washington-post"
+                onArticleClick={handleArticleClick}
+              />
+            </div>
+            <div className="w-1/3">
+              <NewsList
+                newsData={data["wsj"]}
+                newsTitle="The Wall Street Journal"
+                newsSource="wsj"
+                onArticleClick={handleArticleClick}
+              />
+            </div>
+            <div className="w-1/3">
+              <NewsList
+                newsData={data["fox-news"]}
+                newsTitle="Fox News"
+                newsSource="fox-news"
+                onArticleClick={handleArticleClick}
+              />
+            </div>
           </div>
-          <div className="w-1/3">
-            <NewsList
-              newsData={data["wsj"]}
-              newsTitle="The Wall Street Journal"
-              newsSource="wsj"
-              onArticleClick={handleArticleClick}
-            />
-          </div>
-          <div className="w-1/3">
-            <NewsList
-              newsData={data["fox-news"]}
-              newsTitle="Fox News"
-              newsSource="fox-news"
-              onArticleClick={handleArticleClick}
-            />
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </main>
   );
 
