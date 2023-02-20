@@ -136,7 +136,11 @@ const NewsList = ({
 }: NewsListProps) => {
   return (
     <Fragment>
-      <img alt={newsTitle} src={newsTitleMedia} className="object-contain h-24 container mx-auto" />
+      <img
+        alt={newsTitle}
+        src={newsTitleMedia}
+        className="object-contain h-24 container mx-auto"
+      />
       {/* TODO: type news  */}
       {newsData ? (
         Object.keys(newsData).map((date: any, index: number) => {
@@ -151,7 +155,7 @@ const NewsList = ({
           });
 
           return (
-            <div className="relative mb-12" key={index}>
+            <div className="relative mb-12 cursor-pointer" key={index}>
               <div className="text-gray-500">{createdAt} EST</div>
               <NewsStack
                 newsHour={newsData[date]}

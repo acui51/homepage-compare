@@ -36,18 +36,20 @@ export default function Home() {
     refetch(value);
   };
 
-  if (error) {
+  if (error || !data) {
     return <div>Error...</div>;
   }
 
   return (
-    <main className="flex flex-col items-center p-24 min-h-screen">
+    <main className="flex flex-col items-center px-24 py-12 min-h-screen">
       <div className="max-w-7xl flex flex-col items-center">
+        <h3 className="font-bold text-2xl mb-8">Homepage Compare</h3>
         <h3 className="font-bold">Search:</h3>
         <Input.Search
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           onSearch={(value) => refetch(value)}
+          placeholder="Enter an article headline or full sentence..."
           className="w-96 mb-8"
         />
         <h3 className="font-bold">Dates:</h3>
