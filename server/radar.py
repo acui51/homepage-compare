@@ -24,11 +24,10 @@ def ner_headlines(headlines, excluded_entities=None) -> Counter:
         tagged = nltk.pos_tag(tokens)
         entities = nltk.chunk.ne_chunk(tagged)
         for entity in entities:
-            if hasattr(entity, "label"):
-                if entity.label() == "PERSON":
-                    name = " ".join(c[0] for c in entity.leaves())
-                    if name not in excluded_entities:
-                        out[name] += 1
+            if hasattr(entity, "label") and entity.label() == "PERSON":
+                name = " ".join(c[0] for c in entity.leaves())
+                if name not in excluded_entities:
+                    out[name] += 1
 
     return out
 
@@ -66,6 +65,13 @@ def normalized_top_ten(c: Counter) -> list[tuple[str, float]]:
     top_ten = Counter(c).most_common(10)
 
     return top_ten
+
+
+def entity_tuples(source: str) -> list[tuple[str, float]]:
+    headlines = headlines_by_source(source)
+    ner = ner_headlines(headlines, excluded_entities=[" ".join(source.split("-")).title()])
+    ner = merge_first_and_last_names(ner)
+    return normalized_top_ten(ner)
 
 
 if __name__ == "__main__":
