@@ -7,16 +7,14 @@ import { Line, LineRadial } from '@visx/shape';
 const peterRiver = '#3498db';
 const belizeHole = '#2980b9';
 const silver = '#d9d9d9';
-const background = '#FAF7E9';
+const background = '#FFFFFF';
 
 const y = (d: RadarProminence) => d.prominence;
 
-function genAngles(length: number) {
-  const interval = [...new Array(length + 1)]
-  return interval.map((_, i) => ({
+const genAngles = (length: number) =>
+  [...new Array(length + 1)].map((_, i) => ({
     angle: i * (360 / length) + (length % 2 === 0 ? 0 : 360 / length / 2),
-  }))
-}
+  }));
 
 const genPoints = (length: number, radius: number) => {
   const step = (Math.PI * 2) / length;
@@ -89,7 +87,7 @@ export default function NewsPreview({ radarData, margin = defaultMargin }: NewsP
   const origin = new Point({ x: 0, y: 0 });
   
   return (
-    <div>
+    <div className='w-full flex justify-center items-center'>
       <svg width={width} height={height}>
         <rect fill={background} width={width} height={height} rx={14} />
         <Group top={height / 2 - margin.top} left={width / 2}>
