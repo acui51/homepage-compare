@@ -12,7 +12,7 @@ type NewsPreviewProps = {
     radarData: RadarProminence[];
 }
 
-const NewsPreview = ({ radarData }: NewsPreviewProps) => {
+export default function NewsPreview({ radarData }: NewsPreviewProps) {
     return (
         <div>
             <h1>News Preview</h1>
