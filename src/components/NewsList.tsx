@@ -2,6 +2,7 @@ import { Button } from "antd";
 import { Fragment, useState } from "react";
 import { UpOutlined } from "@ant-design/icons";
 import classnames from "classnames";
+import NewsPreview from "./NewsPreview";
 
 const PUBLIC_STORAGE_URL =
   "https://nvpoxnhyhnoxikpasiwv.supabase.co/storage/v1/object/public/washington-post-screenshots";
@@ -32,6 +33,11 @@ type NewsStackProps = {
    * URL address of wordmark logo for news source
    */
   newsTitleMedia: string;
+  
+  /**
+   * data for radar preview
+   */
+  radarData: any;
 };
 
 const NewsStack = ({
@@ -125,6 +131,11 @@ type NewsListProps = {
    * setter function for updating the search value
    */
   onArticleClick: (value: string) => void;
+
+  /**
+   * data for radar preview
+   */
+    radarData: any;
 };
 
 const NewsList = ({
@@ -132,11 +143,13 @@ const NewsList = ({
   newsTitle,
   newsTitleMedia,
   newsSource,
+  radarData,
   onArticleClick,
 }: NewsListProps) => {
   return (
     <Fragment>
       <img alt={newsTitle} src={newsTitleMedia} className="object-contain h-24 container mx-auto" />
+      {radarData && <NewsPreview radarData={radarData} />}
       {/* TODO: type news  */}
       {newsData ? (
         Object.keys(newsData).map((date: any, index: number) => {
@@ -157,6 +170,7 @@ const NewsList = ({
                 newsHour={newsData[date]}
                 createdAt={createdAt}
                 newsSource={newsSource}
+                radarData={radarData}
                 newsTitleMedia={newsTitleMedia}
                 onArticleClick={onArticleClick}
               />
