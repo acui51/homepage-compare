@@ -10,6 +10,14 @@ type DateRange = {
   upperBoundDate: string;
 };
 
+const logos = {
+  "the-washington-post":
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/The_Logo_of_The_Washington_Post_Newspaper.svg/2560px-The_Logo_of_The_Washington_Post_Newspaper.svg.png",
+  wsj: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/WSJ_Logo.svg/2560px-WSJ_Logo.svg.png",
+  "fox-news":
+    "https://www.foxbusiness.com/_wzln/img/footer-logo-fox-news.1825209.svg",
+};
+
 export default function Home() {
   const [searchValue, setSearchValue] = useState("");
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -59,6 +67,7 @@ export default function Home() {
           <div className="flex gap-4 w-full">
             <div className="w-1/3">
               <NewsList
+                newsTitleMedia={logos["the-washington-post"]}
                 newsData={data["the-washington-post"]}
                 newsTitle="The Washington Post"
                 newsSource="the-washington-post"
@@ -67,6 +76,7 @@ export default function Home() {
             </div>
             <div className="w-1/3">
               <NewsList
+                newsTitleMedia={logos["wsj"]}
                 newsData={data["wsj"]}
                 newsTitle="The Wall Street Journal"
                 newsSource="wsj"
@@ -75,6 +85,7 @@ export default function Home() {
             </div>
             <div className="w-1/3">
               <NewsList
+                newsTitleMedia={logos["fox-news"]}
                 newsData={data["fox-news"]}
                 newsTitle="Fox News"
                 newsSource="fox-news"
