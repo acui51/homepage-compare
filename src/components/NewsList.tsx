@@ -136,7 +136,6 @@ const NewsList = ({
 }: NewsListProps) => {
   return (
     <Fragment>
-      {/* aspect fit tailwind.css */}
       <img alt={newsTitle} src={newsTitleMedia} className="object-contain h-24 container mx-auto" />
       {/* TODO: type news  */}
       {newsData ? (
