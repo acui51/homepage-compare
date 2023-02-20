@@ -14,7 +14,7 @@ supabase_url, supabase_key = load_credentials()
 supabase_client = create_client(supabase_url, supabase_key)
 
 
-def ner_headlines(headlines, excluded_entities=None) -> Counter:
+def ner_headlines(headlines: list[str], excluded_entities=None) -> Counter:
     # Identify the named entities in each headline and return Counter object containing the frequency of each entity.
     if excluded_entities is None:
         excluded_entities = []
