@@ -10,11 +10,13 @@ type DateRange = {
   upperBoundDate: string;
 };
 
-const logos = {
-  "the-washington-post": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/The_Logo_of_The_Washington_Post_Newspaper.svg/2560px-The_Logo_of_The_Washington_Post_Newspaper.svg.png",
-  "wsj": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/WSJ_Logo.svg/2560px-WSJ_Logo.svg.png",
-  "fox-news": "https://www.foxbusiness.com/_wzln/img/footer-logo-fox-news.1825209.svg",
-}
+const LOGO_ASSETS = {
+  "the-washington-post":
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/The_Logo_of_The_Washington_Post_Newspaper.svg/2560px-The_Logo_of_The_Washington_Post_Newspaper.svg.png",
+  wsj: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/WSJ_Logo.svg/2560px-WSJ_Logo.svg.png",
+  "fox-news":
+    "https://www.foxbusiness.com/_wzln/img/footer-logo-fox-news.1825209.svg",
+};
 
 export default function Home() {
   const [searchValue, setSearchValue] = useState("");
@@ -44,61 +46,62 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-col items-center p-24 min-h-screen">
-      <h3 className="font-bold">Search:</h3>
-      <Input.Search
-        value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
-        onSearch={(value) => refetch(value)}
-        className="w-96 mb-8"
-      />
-      <h3 className="font-bold">Dates:</h3>
-      <DatePicker.RangePicker
-        defaultValue={[
-          dayjs(dateRange.lowerBoundDate),
-          dayjs(dateRange.upperBoundDate),
-        ]}
-        showTime={{ format: "HH:mm" }}
-        format="YYYY-MM-DD HH:mm"
-        onOk={onOk}
-        className="w-96 mb-8"
-      />
-      {loading ? (
-        <Spin />
-      ) : (
-        <div className="flex gap-4 w-full">
-          <div className="w-1/3">
-            <NewsList
-              newsData={data["the-washington-post"]}
-              newsTitleMedia={logos["the-washington-post"]}
-              newsTitle="The Washington Post"
-              newsSource="the-washington-post"
-              radarData={publicationPreviews?.["the-washington-post"]}
-              onArticleClick={handleArticleClick}
-            />
+    <main className="flex flex-col items-center px-24 py-12 min-h-screen">
+      <div className="max-w-7xl flex flex-col items-center">
+        <h3 className="font-bold text-2xl mb-8">Homepage Compare</h3>
+        <h3 className="font-bold">Search:</h3>
+        <Input.Search
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          onSearch={(value) => refetch(value)}
+          placeholder="Enter an article headline or full sentence..."
+          className="w-96 mb-8"
+        />
+        <h3 className="font-bold">Dates:</h3>
+        <DatePicker.RangePicker
+          defaultValue={[
+            dayjs(dateRange.lowerBoundDate),
+            dayjs(dateRange.upperBoundDate),
+          ]}
+          showTime={{ format: "HH:mm" }}
+          format="YYYY-MM-DD HH:mm"
+          onOk={onOk}
+          className="w-96 mb-8"
+        />
+        {loading || !data ? (
+          <Spin />
+        ) : (
+          <div className="flex gap-4 w-full">
+            <div className="w-1/3">
+              <NewsList
+                newsTitleMedia={LOGO_ASSETS["the-washington-post"]}
+                newsData={data["the-washington-post"]}
+                newsTitle="The Washington Post"
+                newsSource="the-washington-post"
+                onArticleClick={handleArticleClick}
+              />
+            </div>
+            <div className="w-1/3">
+              <NewsList
+                newsTitleMedia={LOGO_ASSETS["wsj"]}
+                newsData={data["wsj"]}
+                newsTitle="The Wall Street Journal"
+                newsSource="wsj"
+                onArticleClick={handleArticleClick}
+              />
+            </div>
+            <div className="w-1/3">
+              <NewsList
+                newsTitleMedia={LOGO_ASSETS["fox-news"]}
+                newsData={data["fox-news"]}
+                newsTitle="Fox News"
+                newsSource="fox-news"
+                onArticleClick={handleArticleClick}
+              />
+            </div>
           </div>
-          <div className="w-1/3">
-            <NewsList
-              newsData={data["wsj"]}
-              newsTitleMedia={logos["wsj"]}
-              newsTitle="The Wall Street Journal"
-              newsSource="wsj"
-              radarData={publicationPreviews?.["wsj"]}
-              onArticleClick={handleArticleClick}
-            />
-          </div>
-          <div className="w-1/3">
-            <NewsList
-              newsData={data["fox-news"]}
-              newsTitleMedia={logos["fox-news"]}
-              newsTitle="Fox News"
-              newsSource="fox-news"
-              radarData={publicationPreviews?.["fox-news"]}
-              onArticleClick={handleArticleClick}
-            />
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </main>
   );
 

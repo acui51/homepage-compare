@@ -1,8 +1,22 @@
+import { Database } from "@/schema";
 import { groupByDate, groupByKey } from "@/utils/groupBy";
 import { useEffect, useState } from "react";
 import { supabase } from "supabase";
 
 const SIMILARITY_THRESHOLD = 0.5;
+
+export type HomepageNewsRow =
+  Database["public"]["Tables"]["homepage-news"]["Row"];
+
+// [date]:
+export type HomepageDateData = {
+  [key: string]: HomepageNewsRow[];
+};
+
+// [news_source]:
+type HomepageData = {
+  [key: string]: HomepageDateData;
+};
 
 export const useHomepageNews = ({
   lowerBoundDate,
@@ -13,7 +27,7 @@ export const useHomepageNews = ({
   upperBoundDate: string;
   searchValue: string;
 }) => {
-  const [data, setData] = useState<any>();
+  const [data, setData] = useState<HomepageData>();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
