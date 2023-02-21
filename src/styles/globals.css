@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* antd overrides */
-:where(.css-dev-only-do-not-override-diro6f).ant-btn-primary:disabled {
+.ant-btn-primary:disabled {
   cursor: not-allowed;
   border-color: #d9d9d9;
   color: rgba(0, 0, 0, 0.25);
@@ -11,7 +11,7 @@
   box-shadow: none;
 }
 
-:where(.css-dev-only-do-not-override-diro6f).ant-btn-primary {
+.ant-btn-primary {
   color: #fff;
   background-color: #1677ff !important;
   box-shadow: 0 2px 0 rgb(5 145 255 / 10%);

@@ -30,7 +30,7 @@ export default function Home() {
 
   const handleArticleClick = (value: string) => {
     setSearchValue(value);
-    refetch(value);
+    refetch({ query: value, searchType: "similarity" });
   };
 
   if (error) {
@@ -45,7 +45,7 @@ export default function Home() {
         <Input.Search
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          onSearch={(value) => refetch(value)}
+          onSearch={(value) => refetch({ query: value, searchType: "search" })}
           placeholder="Enter an article headline or full sentence..."
           className="w-96 mb-8"
         />
