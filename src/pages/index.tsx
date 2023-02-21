@@ -10,12 +10,6 @@ type DateRange = {
   upperBoundDate: string;
 };
 
-const LOGO_ASSETS = {
-  "the-washington-post": "/wapo_logo.png",
-  wsj: "/wsj_logo.png",
-  "fox-news": "/fox_news_logo.svg",
-};
-
 export default function Home() {
   const [searchValue, setSearchValue] = useState("");
   const [dateRange, setDateRange] = useState<DateRange>({
