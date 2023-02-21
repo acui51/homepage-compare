@@ -5,10 +5,17 @@ import { supabase } from "supabase";
 
 const SIMILARITY_THRESHOLD = 0.5;
 
+export type HomepageNewsRow =
+  Database["public"]["Tables"]["homepage-news"]["Row"];
+
+// [date]:
+export type HomepageDateData = {
+  [key: string]: HomepageNewsRow[];
+};
+
+// [news_source]:
 type HomepageData = {
-  [key: string]: {
-    [key: string]: Database["public"]["Tables"]["homepage-news"]["Row"][];
-  };
+  [key: string]: HomepageDateData;
 };
 
 export const useHomepageNews = ({

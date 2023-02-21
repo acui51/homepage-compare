@@ -2,6 +2,10 @@ import { Button } from "antd";
 import { Fragment, useState } from "react";
 import { UpOutlined } from "@ant-design/icons";
 import classnames from "classnames";
+import type {
+  HomepageDateData,
+  HomepageNewsRow,
+} from "../hooks/useHomepageNews";
 
 const PUBLIC_STORAGE_URL =
   "https://nvpoxnhyhnoxikpasiwv.supabase.co/storage/v1/object/public/washington-post-screenshots";
@@ -11,7 +15,7 @@ type NewsStackProps = {
    * TODO: type
    * array of news articles
    */
-  newsHour: any;
+  newsHour: HomepageNewsRow[];
 
   /**
    * on click handler for article title
@@ -41,6 +45,8 @@ const NewsStack = ({
   newsSource,
 }: NewsStackProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  console.log("newsHour", newsHour);
 
   return (
     <Fragment>
@@ -102,9 +108,9 @@ const NewsStack = ({
 
 type NewsListProps = {
   /**
-   * TODO: update with gen types
+   * News data
    */
-  newsData: any | undefined;
+  newsData: HomepageDateData;
 
   /**
    * URL address of wordmark logo for news source
@@ -141,7 +147,6 @@ const NewsList = ({
         src={newsTitleMedia}
         className="object-contain h-24 container mx-auto"
       />
-      {/* TODO: type news  */}
       {newsData ? (
         Object.keys(newsData).map((date: any, index: number) => {
           const createdAt = new Date(date).toLocaleDateString("en-us", {
