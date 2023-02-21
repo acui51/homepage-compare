@@ -53,7 +53,7 @@ export type RadarProps = {
 };
 
 interface RadarProminence {
-    entity: string;
+    name: string;
     prominence: number;
 }
 
@@ -109,7 +109,13 @@ export default function NewsPreview({ radarData, margin = defaultMargin }: NewsP
           ))}
           <polygon points={polygonPoints.pointString} fill={peterRiver} fillOpacity={0.3} stroke={peterRiver} strokeWidth={1} />
           {polygonPoints.points.map((point, i) => (
-            <circle key={`radar-point-${i}`} cx={point.x} cy={point.y} r={4} fill={belizeHole} />
+            <React.Fragment key={`radar-point-${i}`}>
+              <circle key={`radar-point-${i}`} cx={point.x} cy={point.y} r={4} fill={belizeHole} />
+              <text key={`radar-point-text-${i}`} x={point.x} y={point.y} dx={-10} dy={-10} fontSize={10} fill={belizeHole}>
+                {/* For lack of screen real estate, only show name if it is sufficiently far away from other points. */}
+                {radarData[i].prominence > 0.05 && radarData[i].name}
+              </text>
+            </React.Fragment>
           ))}
         </Group>
       </svg>

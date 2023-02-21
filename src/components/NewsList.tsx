@@ -148,8 +148,8 @@ const NewsList = ({
 }: NewsListProps) => {
   return (
     <Fragment>
-      <img alt={newsTitle} src={newsTitleMedia} className="object-contain h-24 container mx-auto" />
-      {radarData && <NewsPreview radarData={radarData} />}
+      <img alt={newsTitle} src={newsTitleMedia} className="object-contain h-20 container mx-auto" />
+      {radarData?.length >= 10 && <NewsPreview radarData={radarData} />}
       {/* TODO: type news  */}
       {newsData ? (
         Object.keys(newsData).map((date: any, index: number) => {

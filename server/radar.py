@@ -48,9 +48,13 @@ def merge_first_and_last_names(c: Counter) -> Counter:
     return c
 
 
-def headlines_by_source(source: str) -> list[str]:
+def headlines_by_source(source: str, start_date=None, end_date=None) -> list[str]:
     query = supabase_client.table("top-headlines-news").select("title, source_id").filter("source_id", "eq", source)
     # TODO: Add filter by date e.g., .filter("publishedAt", "lt", "2023-02-15T00:00:00Z")
+    if start_date is not None:
+        query = query.filter("publishedAt", "gt", start_date)
+    if end_date is not None:
+        query = query.filter("publishedAt", "lt", end_date)
     response = query.execute()
     entries = response.data
 
@@ -67,8 +71,8 @@ def normalized_top_ten(c: Counter) -> list[tuple[str, float]]:
     return top_ten
 
 
-def entity_tuples(source: str) -> list[tuple[str, float]]:
-    headlines = headlines_by_source(source)
+def entity_tuples(source: str, start_date=None, end_date=None) -> list[tuple[str, float]]:
+    headlines = headlines_by_source(source, start_date=start_date, end_date=end_date)
     ner = ner_headlines(headlines, excluded_entities=[" ".join(source.split("-")).title()])
     ner = merge_first_and_last_names(ner)
     return normalized_top_ten(ner)

@@ -29,7 +29,10 @@ export default function Home() {
     searchValue,
   });
 
-  const { data: publicationPreviews } = usePublicationPreviews();
+  const { data: publicationPreviews } = usePublicationPreviews({
+    lowerBoundDate: dateRange.lowerBoundDate,
+    upperBoundDate: dateRange.upperBoundDate,
+  });
 
   const handleArticleClick = (value: string) => {
     setSearchValue(value);
