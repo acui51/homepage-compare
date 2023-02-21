@@ -11,11 +11,9 @@ type DateRange = {
 };
 
 const LOGO_ASSETS = {
-  "the-washington-post":
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/The_Logo_of_The_Washington_Post_Newspaper.svg/2560px-The_Logo_of_The_Washington_Post_Newspaper.svg.png",
-  wsj: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/WSJ_Logo.svg/2560px-WSJ_Logo.svg.png",
-  "fox-news":
-    "https://www.foxbusiness.com/_wzln/img/footer-logo-fox-news.1825209.svg",
+  "the-washington-post": "/wapo_logo.png",
+  wsj: "/wsj_logo.png",
+  "fox-news": "/fox_news_logo.svg",
 };
 
 export default function Home() {

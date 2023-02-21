@@ -6,6 +6,10 @@ import type {
   HomepageDateData,
   HomepageNewsRow,
 } from "../hooks/useHomepageNews";
+import Image from "next/image";
+import WapoLogo from "../../public/wapo_logo.png";
+import WSJLogo from "../../public/wsj_logo.png";
+import FoxNewsLogo from "../../public/fox_news_logo.svg";
 
 const PUBLIC_STORAGE_URL =
   "https://nvpoxnhyhnoxikpasiwv.supabase.co/storage/v1/object/public/washington-post-screenshots";
@@ -31,11 +35,6 @@ type NewsStackProps = {
    * source id of news website scraped from
    */
   newsSource: string;
-
-  /**
-   * URL address of wordmark logo for news source
-   */
-  newsTitleMedia: string;
 };
 
 const NewsStack = ({
@@ -45,8 +44,6 @@ const NewsStack = ({
   newsSource,
 }: NewsStackProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  console.log("newsHour", newsHour);
 
   return (
     <Fragment>
@@ -113,11 +110,6 @@ type NewsListProps = {
   newsData: HomepageDateData;
 
   /**
-   * URL address of wordmark logo for news source
-   */
-  newsTitleMedia: string;
-
-  /**
    * title of news source
    */
   newsTitle: string;
@@ -136,15 +128,14 @@ type NewsListProps = {
 const NewsList = ({
   newsData,
   newsTitle,
-  newsTitleMedia,
   newsSource,
   onArticleClick,
 }: NewsListProps) => {
   return (
     <Fragment>
-      <img
+      <Image
         alt={newsTitle}
-        src={newsTitleMedia}
+        src={getNewsTitleMedia(newsSource)}
         className="object-contain h-24 container mx-auto"
       />
       {newsData ? (
@@ -166,7 +157,6 @@ const NewsList = ({
                 newsHour={newsData[date]}
                 createdAt={createdAt}
                 newsSource={newsSource}
-                newsTitleMedia={newsTitleMedia}
                 onArticleClick={onArticleClick}
               />
             </div>
@@ -177,6 +167,19 @@ const NewsList = ({
       )}
     </Fragment>
   );
+
+  function getNewsTitleMedia(newsSource: string) {
+    switch (newsSource) {
+      case "wsj":
+        return WSJLogo;
+      case "the-washington-post":
+        return WapoLogo;
+      case "fox-news":
+        return FoxNewsLogo;
+      default:
+        return WSJLogo;
+    }
+  }
 };
 
 export default NewsList;
