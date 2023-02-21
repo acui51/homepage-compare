@@ -2,11 +2,15 @@ import { Button } from "antd";
 import { Fragment, useState } from "react";
 import { UpOutlined } from "@ant-design/icons";
 import classnames from "classnames";
-import NewsPreview from "./NewsPreview";
 import type {
   HomepageDateData,
   HomepageNewsRow,
 } from "../hooks/useHomepageNews";
+import Image from "next/image";
+import WapoLogo from "../../public/wapo_logo.png";
+import WSJLogo from "../../public/wsj_logo.png";
+import FoxNewsLogo from "../../public/fox_news_logo.svg";
+import NewsPreview from "./NewsPreview";
 
 const PUBLIC_STORAGE_URL =
   "https://nvpoxnhyhnoxikpasiwv.supabase.co/storage/v1/object/public/washington-post-screenshots";
@@ -32,16 +36,6 @@ type NewsStackProps = {
    * source id of news website scraped from
    */
   newsSource: string;
-
-  /**
-   * URL address of wordmark logo for news source
-   */
-  newsTitleMedia: string;
-  
-  /**
-   * data for radar preview
-   */
-  radarData: any;
 };
 
 const NewsStack = ({
@@ -51,8 +45,6 @@ const NewsStack = ({
   newsSource,
 }: NewsStackProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  console.log("newsHour", newsHour);
 
   return (
     <Fragment>
@@ -119,11 +111,6 @@ type NewsListProps = {
   newsData: HomepageDateData;
 
   /**
-   * URL address of wordmark logo for news source
-   */
-  newsTitleMedia: string;
-
-  /**
    * title of news source
    */
   newsTitle: string;
@@ -134,29 +121,31 @@ type NewsListProps = {
   newsSource: string;
 
   /**
+   * data for radar preview
+   */
+  radarData: any;
+
+  /**
    * setter function for updating the search value
    */
   onArticleClick: (value: string) => void;
-
-  /**
-   * data for radar preview
-   */
-    radarData: any;
 };
 
 const NewsList = ({
   newsData,
   newsTitle,
-  newsTitleMedia,
   newsSource,
   radarData,
   onArticleClick,
 }: NewsListProps) => {
   return (
     <Fragment>
-      <img alt={newsTitle} src={newsTitleMedia} className="object-contain h-20 container mx-auto" />
+      <Image
+        alt={newsTitle}
+        src={getNewsTitleMedia(newsSource)}
+        className="object-contain h-24 container mx-auto"
+      />
       {radarData?.length >= 10 && <NewsPreview radarData={radarData} />}
-      {/* TODO: type news  */}
       {newsData ? (
         Object.keys(newsData).map((date: any, index: number) => {
           const createdAt = new Date(date).toLocaleDateString("en-us", {
@@ -176,8 +165,6 @@ const NewsList = ({
                 newsHour={newsData[date]}
                 createdAt={createdAt}
                 newsSource={newsSource}
-                radarData={radarData}
-                newsTitleMedia={newsTitleMedia}
                 onArticleClick={onArticleClick}
               />
             </div>
@@ -188,6 +175,20 @@ const NewsList = ({
       )}
     </Fragment>
   );
+
+  function getNewsTitleMedia(newsSource: string) {
+    switch (newsSource) {
+      case "wsj":
+        return WSJLogo;
+      case "the-washington-post":
+        return WapoLogo;
+      case "fox-news":
+        return FoxNewsLogo;
+      // TODO: change default news logo
+      default:
+        return WSJLogo;
+    }
+  }
 };
 
 export default NewsList;
