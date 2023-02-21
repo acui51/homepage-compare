@@ -6,10 +6,20 @@ The way to compare how news is protrayed on homepages
 
 Copy `.env.local` from Notion into parent directory
 
+Install Node modules
+```bash
+yarn
+```
+
 Run the development server:
 
 ```bash
 yarn dev
+```
+
+Install Python dependencies
+```bash
+pip install -r server/requirements.txt
 ```
 
 Run the Flask API:
