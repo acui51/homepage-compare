@@ -42,6 +42,7 @@ export const useHomepageNews = ({
     query: string;
     searchType?: SearchType;
   }) => {
+    console.log("fetchin again");
     setLoading(true);
     setSearchTypeState((prevSearchType: SearchType) =>
       searchType ? searchType : prevSearchType
