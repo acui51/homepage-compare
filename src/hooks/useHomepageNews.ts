@@ -18,6 +18,8 @@ type HomepageData = {
   [key: string]: HomepageDateData;
 };
 
+type SearchType = "search" | "similarity";
+
 export const useHomepageNews = ({
   lowerBoundDate,
   upperBoundDate,
@@ -30,9 +32,20 @@ export const useHomepageNews = ({
   const [data, setData] = useState<HomepageData>();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [searchTypeState, setSearchTypeState] =
+    useState<SearchType>("similarity");
 
-  const fetchHomepageNews = async (query: string) => {
+  const fetchHomepageNews = async ({
+    query,
+    searchType,
+  }: {
+    query: string;
+    searchType?: SearchType;
+  }) => {
     setLoading(true);
+    setSearchTypeState((prevSearchType: SearchType) =>
+      searchType ? searchType : prevSearchType
+    );
     try {
       const { data, error } = await supabase
         .from("homepage-news")
@@ -55,7 +68,12 @@ export const useHomepageNews = ({
       };
 
       if (!!query) {
-        const res = await fetch("/api/similarSentences", {
+        const type = searchType ? searchType : searchTypeState;
+
+        const endpoint =
+          type === "search" ? "/api/searchSentences" : "/api/similarSentences";
+
+        const res = await fetch(endpoint, {
           method: "POST",
           body: JSON.stringify(reqBody),
         });
@@ -96,7 +114,7 @@ export const useHomepageNews = ({
   };
 
   useEffect(() => {
-    fetchHomepageNews(searchValue);
+    fetchHomepageNews({ query: searchValue });
   }, [lowerBoundDate, upperBoundDate]);
 
   return { data, loading, error, refetch: fetchHomepageNews };
