@@ -36,7 +36,7 @@ export default function Home() {
     refetch(value);
   };
 
-  if (error || !data) {
+  if (error) {
     return <div>Error...</div>;
   }
 
@@ -63,7 +63,7 @@ export default function Home() {
           onOk={onOk}
           className="w-96 mb-8"
         />
-        {loading ? (
+        {loading || !data ? (
           <Spin />
         ) : (
           <div className="flex gap-4 w-full">
