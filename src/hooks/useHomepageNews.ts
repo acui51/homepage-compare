@@ -42,7 +42,6 @@ export const useHomepageNews = ({
     query: string;
     searchType?: SearchType;
   }) => {
-    console.log("query", query);
     setLoading(true);
     setSearchTypeState((prevSearchType: SearchType) =>
       searchType ? searchType : prevSearchType
@@ -67,8 +66,6 @@ export const useHomepageNews = ({
           }),
         },
       };
-
-      console.log("reqBody", reqBody);
 
       if (!!query) {
         const type = searchType ? searchType : searchTypeState;
