@@ -16,3 +16,17 @@
   background-color: #1677ff !important;
   box-shadow: 0 2px 0 rgb(5 145 255 / 10%);
 }
+
+.ant-input {
+  border-radius: 9999px;
+}
+
+.ant-input-search-button {
+  border-top-right-radius: 9999px !important;
+  border-bottom-right-radius: 9999px !important;
+  box-shadow: none !important;
+}
+
+.ant-input-group-addon {
+  background-color: transparent !important;
+}

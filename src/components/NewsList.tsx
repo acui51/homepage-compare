@@ -54,7 +54,7 @@ const NewsStack = ({
           return (
             <div
               className={classnames(
-                "mb-3 max-h-96 overflow-hidden p-2 rounded-md border-2 bg-white border-gray-500",
+                "mb-3 max-h-96 overflow-hidden p-2 rounded-md border-2 bg-white border-gray-500 hover:border-[#1677ff]",
                 { "grayscale hover:grayscale-0": !isExpanded }
               )}
               key={news.id}
@@ -143,7 +143,7 @@ const NewsList = ({
       <Image
         alt={newsTitle}
         src={getNewsTitleMedia(newsSource)}
-        className="object-contain h-24 container mx-auto"
+        className="object-contain h-24 container mx-auto w-2/3"
       />
       {radarData?.length >= 10 && <NewsPreview radarData={radarData} />}
       {newsData ? (
