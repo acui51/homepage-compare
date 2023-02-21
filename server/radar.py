@@ -50,7 +50,6 @@ def merge_first_and_last_names(c: Counter) -> Counter:
 
 def headlines_by_source(source: str, start_date=None, end_date=None) -> list[str]:
     query = supabase_client.table("top-headlines-news").select("title, source_id").filter("source_id", "eq", source)
-    # TODO: Add filter by date e.g., .filter("publishedAt", "lt", "2023-02-15T00:00:00Z")
     if start_date is not None:
         query = query.filter("publishedAt", "gt", start_date)
     if end_date is not None:
