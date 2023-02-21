@@ -38,18 +38,19 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-col items-center px-24 py-12 min-h-screen">
+    <main className="flex flex-col items-center px-24 py-10 min-h-screen">
       <div className="max-w-7xl flex flex-col items-center">
-        <h3 className="font-bold text-2xl mb-8">Homepage Compare</h3>
-        <h3 className="font-bold">Search:</h3>
+        <h3 className="text-stone-700 w-2/5 font-bold text-center text-3xl mb-4">
+          Get the real story by tracing how coverage compares and evolves
+        </h3>
         <Input.Search
+          size="large"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           onSearch={(value) => refetch({ query: value, searchType: "search" })}
-          placeholder="Enter an article headline or full sentence..."
-          className="w-96 mb-8"
+          placeholder="Search for anything within the date range"
+          className="w-3/5 mb-16"
         />
-        <h3 className="font-bold">Dates:</h3>
         <DatePicker.RangePicker
           defaultValue={[
             dayjs(dateRange.lowerBoundDate),
@@ -58,7 +59,7 @@ export default function Home() {
           showTime={{ format: "HH:mm" }}
           format="YYYY-MM-DD HH:mm"
           onOk={onOk}
-          className="w-96 mb-8"
+          className="w-84 self-start"
         />
         {loading || !data ? (
           <Spin />
