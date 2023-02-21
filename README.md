@@ -11,3 +11,10 @@ Run the development server:
 ```bash
 yarn dev
 ```
+
+Run the Flask API:
+```bash
+python server/run.py
+```
+
+Endpoints can be reached at `127.0.0.1:8000`
