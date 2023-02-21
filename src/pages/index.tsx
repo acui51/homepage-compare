@@ -67,7 +67,6 @@ export default function Home() {
           <div className="flex gap-4 w-full">
             <div className="w-1/3">
               <NewsList
-                newsTitleMedia={LOGO_ASSETS["the-washington-post"]}
                 newsData={data["the-washington-post"]}
                 newsTitle="The Washington Post"
                 newsSource="the-washington-post"
@@ -76,7 +75,6 @@ export default function Home() {
             </div>
             <div className="w-1/3">
               <NewsList
-                newsTitleMedia={LOGO_ASSETS["wsj"]}
                 newsData={data["wsj"]}
                 newsTitle="The Wall Street Journal"
                 newsSource="wsj"
@@ -85,7 +83,6 @@ export default function Home() {
             </div>
             <div className="w-1/3">
               <NewsList
-                newsTitleMedia={LOGO_ASSETS["fox-news"]}
                 newsData={data["fox-news"]}
                 newsTitle="Fox News"
                 newsSource="fox-news"

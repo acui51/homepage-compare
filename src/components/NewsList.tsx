@@ -176,6 +176,7 @@ const NewsList = ({
         return WapoLogo;
       case "fox-news":
         return FoxNewsLogo;
+      // TODO: change default news logo
       default:
         return WSJLogo;
     }
