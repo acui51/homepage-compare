@@ -1,4 +1,4 @@
-import { useHomepageNews } from "@/hooks/useHomepageNews";
+import { useHomepageNews, usePublicationPreviews } from "@/hooks";
 import { useState } from "react";
 import { Input, Spin, DatePicker } from "antd";
 import type { RangePickerProps } from "antd/es/date-picker";
@@ -21,6 +21,11 @@ export default function Home() {
     lowerBoundDate: dateRange.lowerBoundDate,
     upperBoundDate: dateRange.upperBoundDate,
     searchValue,
+  });
+
+  const { data: publicationPreviews } = usePublicationPreviews({
+    lowerBoundDate: dateRange.lowerBoundDate,
+    upperBoundDate: dateRange.upperBoundDate,
   });
 
   const handleArticleClick = (value: string) => {
@@ -64,6 +69,7 @@ export default function Home() {
                 newsData={data["the-washington-post"]}
                 newsTitle="The Washington Post"
                 newsSource="the-washington-post"
+                radarData={publicationPreviews?.["the-washington-post"]}
                 onArticleClick={handleArticleClick}
               />
             </div>
@@ -72,6 +78,7 @@ export default function Home() {
                 newsData={data["wsj"]}
                 newsTitle="The Wall Street Journal"
                 newsSource="wsj"
+                radarData={publicationPreviews?.["wsj"]}
                 onArticleClick={handleArticleClick}
               />
             </div>
@@ -80,6 +87,7 @@ export default function Home() {
                 newsData={data["fox-news"]}
                 newsTitle="Fox News"
                 newsSource="fox-news"
+                radarData={publicationPreviews?.["fox-news"]}
                 onArticleClick={handleArticleClick}
               />
             </div>

@@ -10,6 +10,7 @@ import Image from "next/image";
 import WapoLogo from "../../public/wapo_logo.png";
 import WSJLogo from "../../public/wsj_logo.png";
 import FoxNewsLogo from "../../public/fox_news_logo.svg";
+import NewsPreview from "./NewsPreview";
 
 const PUBLIC_STORAGE_URL =
   "https://nvpoxnhyhnoxikpasiwv.supabase.co/storage/v1/object/public/washington-post-screenshots";
@@ -120,6 +121,11 @@ type NewsListProps = {
   newsSource: string;
 
   /**
+   * data for radar preview
+   */
+  radarData: any;
+
+  /**
    * setter function for updating the search value
    */
   onArticleClick: (value: string) => void;
@@ -129,6 +135,7 @@ const NewsList = ({
   newsData,
   newsTitle,
   newsSource,
+  radarData,
   onArticleClick,
 }: NewsListProps) => {
   return (
@@ -138,6 +145,7 @@ const NewsList = ({
         src={getNewsTitleMedia(newsSource)}
         className="object-contain h-24 container mx-auto"
       />
+      {radarData?.length >= 10 && <NewsPreview radarData={radarData} />}
       {newsData ? (
         Object.keys(newsData).map((date: any, index: number) => {
           const createdAt = new Date(date).toLocaleDateString("en-us", {
