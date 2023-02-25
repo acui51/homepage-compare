@@ -38,6 +38,8 @@ export default function NewsPreview({ radarData, margin = defaultMargin }: NewsP
   const webs = genAngles(radarData.length);
   const points = genPoints(radarData.length, radius);
   const polygonPoints = genPolygonPoints(radarData, (d) => verticalScale(d) ?? 0, y);
+  // Points on the outside of the polygon
+  const vertices = genPolygonPoints(radarData, (d) => d, y);
   const origin = new Point({ x: 0, y: 0 });
   
   return (
@@ -62,13 +64,14 @@ export default function NewsPreview({ radarData, margin = defaultMargin }: NewsP
             <Line key={`radar-line-${i}`} from={origin} to={points[i]} stroke={silver} />
           ))}
           <polygon points={polygonPoints.pointString} fill={peterRiver} fillOpacity={0.3} stroke={peterRiver} strokeWidth={1} />
+          {points.map((point, i) => (
+            <React.Fragment key={`radar-point-${i}`}>
+              <text key={`radar-point-text-${i}`} x={1.1*point.x} y={1.1*point.y} dx={-10} dy={-10} fontSize={12} fill={belizeHole}>{radarData[i].name}</text>
+            </React.Fragment>
+          ))}
           {polygonPoints.points.map((point, i) => (
             <React.Fragment key={`radar-point-${i}`}>
               <circle key={`radar-point-${i}`} cx={point.x} cy={point.y} r={4} fill={belizeHole} />
-              <text key={`radar-point-text-${i}`} x={point.x} y={point.y} dx={-10} dy={-10} fontSize={10} fill={belizeHole}>
-                {/* For lack of screen real estate, only show name if it is sufficiently far away from other points. */}
-                {radarData[i].prominence > 0.05 && radarData[i].name}
-              </text>
             </React.Fragment>
           ))}
         </Group>
