@@ -31,13 +31,15 @@ export default function NewsPreview({ radarData, margin = defaultMargin }: NewsP
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
   const radius = Math.min(xMax, yMax) / 2;
+  const positionScaleFactor = 1.1;
 
   const radialScale = (d: number) => d * (Math.PI * 2) / 360;
   const verticalScale = (d: number) => d * radius / Math.max(...radarData.map(y));
 
   const webs = genAngles(radarData.length);
   const vertices = genPoints(radarData.length, radius);
-  const polygonPoints = genPolygonPoints(radarData, (d) => verticalScale(d) ?? 0, y);
+  const labelPositions = genPoints(radarData.length, (positionScaleFactor + 0.05) * radius, positionScaleFactor);
+  const nodePositions = genPolygonPoints(radarData, (d) => verticalScale(d) ?? 0, y);
   const origin = new Point({ x: 0, y: 0 });
   
   return (
@@ -61,13 +63,13 @@ export default function NewsPreview({ radarData, margin = defaultMargin }: NewsP
           {[...new Array(radarData.length)].map((_, i) => (
             <Line key={`radar-line-${i}`} from={origin} to={vertices[i]} stroke={silver} />
           ))}
-          <polygon points={polygonPoints.pointString} fill={peterRiver} fillOpacity={0.3} stroke={peterRiver} strokeWidth={1} />
-          {vertices.map((point, i) => (
+          <polygon points={nodePositions.pointString} fill={peterRiver} fillOpacity={0.3} stroke={peterRiver} strokeWidth={1} />
+          {labelPositions.map((point, i) => (
             <React.Fragment key={`radar-point-${i}`}>
-              <text key={`radar-point-text-${i}`} x={1.1*point.x} y={1.1*point.y} dx={-10} dy={-10} fontSize={12} fill={belizeHole}>{radarData[i].name}</text>
+              <text key={`radar-point-text-${i}`} x={point.x} y={point.y} dx={0} dy={0} fontSize={12} fill={belizeHole} textAnchor="middle">{radarData[i].name}</text>
             </React.Fragment>
           ))}
-          {polygonPoints.points.map((point, i) => (
+          {nodePositions.points.map((point, i) => (
             <React.Fragment key={`radar-point-${i}`}>
               <circle key={`radar-point-${i}`} cx={point.x} cy={point.y} r={4} fill={belizeHole} />
             </React.Fragment>

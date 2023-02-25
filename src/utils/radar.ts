@@ -12,11 +12,11 @@ export const genAngles = (length: number) =>
     angle: i * (360 / length) + (length % 2 === 0 ? 0 : 360 / length / 2),
   }));
 
-export const genPoints = (length: number, radius: number) => {
+export const genPoints = (length: number, radius: number, horizontalStretch: number = 1, verticalStretch: number = 1) => {
   const step = (Math.PI * 2) / length;
   return [...new Array(length)].map((_, i) => ({
-    x: radius * Math.sin(i * step),
-    y: radius * Math.cos(i * step),
+    x: horizontalStretch * radius * Math.sin(i * step),
+    y: verticalStretch * radius * Math.cos(i * step),
   }));
 };
 
