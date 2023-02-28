@@ -100,9 +100,12 @@ export default function Home() {
             {data.map((datum) => {
               return (
                 <Fragment>
-                  <div className=" text-neutral-500 text-xl mb-4 sticky top-20 z-50 bg-white">
-                    {formatDateString(datum.date)} EST
-                    <Divider />
+                  <div className=" text-neutral-500 text-xl pb-2 sticky top-20 z-50 bg-white">
+                    <Divider>
+                      <span className="text-neutral-500 text-xl font-medium">
+                        {formatDateString(datum.date)} EST
+                      </span>
+                    </Divider>
                   </div>
                   <div className="flex gap-4 w-full">
                     {newsSources.map(({ sourceId }) => {
