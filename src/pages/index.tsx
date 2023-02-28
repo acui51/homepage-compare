@@ -87,7 +87,7 @@ export default function Home() {
             <div className="flex gap-4 w-full sticky top-0 z-50 bg-white">
               {newsSources.map(({ sourceId, sourceName }) => {
                 return (
-                  <div className="w-1/3">
+                  <div className="w-1/3" key={sourceId}>
                     <Image
                       alt={sourceName}
                       src={getNewsTitleMedia(sourceId)}
@@ -100,7 +100,7 @@ export default function Home() {
             {data.map((datum) => {
               return (
                 <Fragment>
-                  <div className=" text-neutral-500 text-xl pb-2 sticky top-20 z-50 bg-white">
+                  <div className="text-neutral-500 text-xl pb-2 sticky top-20 z-50 bg-white">
                     <Divider>
                       <span className="text-neutral-500 text-xl font-medium">
                         {formatDateString(datum.date)} EST
@@ -108,9 +108,9 @@ export default function Home() {
                     </Divider>
                   </div>
                   <div className="flex gap-4 w-full">
-                    {newsSources.map(({ sourceId }) => {
+                    {newsSources.map(({ sourceId }, index) => {
                       return (
-                        <div className="w-1/3">
+                        <div className="w-1/3" key={index}>
                           <NewsList
                             newsData={datum.articles[sourceId]}
                             newsSource={sourceId}
