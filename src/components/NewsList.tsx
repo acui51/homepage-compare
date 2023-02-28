@@ -130,7 +130,9 @@ const NewsList = ({
           />
         </div>
       ) : (
-        <div>No results found...</div>
+        <div className="flex w-full h-full justify-center">
+          No results found...
+        </div>
       )}
     </Fragment>
   );

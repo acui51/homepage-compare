@@ -99,7 +99,7 @@ export default function Home() {
             </div>
             {data.map((datum) => {
               return (
-                <Fragment>
+                <Fragment key={datum.date}>
                   <div className="text-neutral-500 text-xl pb-2 sticky top-20 z-50 bg-white">
                     <Divider>
                       <span className="text-neutral-500 text-xl font-medium">
