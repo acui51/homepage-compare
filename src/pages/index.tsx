@@ -9,6 +9,7 @@ import Image from "next/image";
 import WapoLogo from "../../public/wapo_logo.png";
 import WSJLogo from "../../public/wsj_logo.png";
 import FoxNewsLogo from "../../public/fox_news_logo.svg";
+import { HomepageNewsRow } from "@/hooks/useHomepageNews";
 
 type DateRange = {
   lowerBoundDate: string;
@@ -112,7 +113,11 @@ export default function Home() {
                       return (
                         <div className="w-1/3" key={index}>
                           <NewsList
-                            newsData={datum.articles[sourceId]}
+                            newsData={datum.articles[sourceId].sort(
+                              (a: HomepageNewsRow, b: HomepageNewsRow) =>
+                                +new Date(a.created_at!) -
+                                +new Date(b.created_at!)
+                            )}
                             newsSource={sourceId}
                             radarData={publicationPreviews?.[sourceId]}
                             onArticleClick={handleArticleClick}

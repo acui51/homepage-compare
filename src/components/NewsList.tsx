@@ -49,7 +49,7 @@ const NewsStack = ({
                 !isExpanded
                   ? {
                       position: `${index > 0 ? "absolute" : "static"}`,
-                      top: `${5 * index}px`,
+                      top: `${4 + 5 * index}px`,
                       left: `${12 + 5 * index}px`,
                       zIndex: `${-index}`,
                     }
