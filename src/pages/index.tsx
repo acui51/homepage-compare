@@ -1,9 +1,14 @@
 import { useHomepageNews, usePublicationPreviews } from "@/hooks";
-import { useState } from "react";
-import { Input, Spin, DatePicker } from "antd";
+import { Fragment, useState } from "react";
+import { Input, Spin, DatePicker, Divider } from "antd";
 import type { RangePickerProps } from "antd/es/date-picker";
 import { NewsList } from "@/components";
 import dayjs from "dayjs";
+import { formatDateString } from "@/utils/formatISOstring";
+import Image from "next/image";
+import WapoLogo from "../../public/wapo_logo.png";
+import WSJLogo from "../../public/wsj_logo.png";
+import FoxNewsLogo from "../../public/fox_news_logo.svg";
 
 type DateRange = {
   lowerBoundDate: string;
@@ -16,6 +21,20 @@ export default function Home() {
     lowerBoundDate: getInitialLowerBoundDate(),
     upperBoundDate: getInitialUpperBoundDate(),
   });
+  const [newsSources, setNewsSources] = useState([
+    {
+      sourceId: "the-washington-post",
+      sourceName: "The Washington Post",
+    },
+    {
+      sourceId: "wsj",
+      sourceName: "The Wall Street Journal",
+    },
+    {
+      sourceId: "fox-news",
+      sourceName: "Fox News",
+    },
+  ]);
 
   const { data, loading, error, refetch } = useHomepageNews({
     lowerBoundDate: dateRange.lowerBoundDate,
@@ -64,34 +83,44 @@ export default function Home() {
         {loading || !data ? (
           <Spin />
         ) : (
-          <div className="flex gap-4 w-full">
-            <div className="w-1/3">
-              <NewsList
-                newsData={data["the-washington-post"]}
-                newsTitle="The Washington Post"
-                newsSource="the-washington-post"
-                radarData={publicationPreviews?.["the-washington-post"]}
-                onArticleClick={handleArticleClick}
-              />
+          <div>
+            <div className="flex gap-4 w-full sticky top-0 z-50 bg-white">
+              {newsSources.map(({ sourceId, sourceName }) => {
+                return (
+                  <div className="w-1/3">
+                    <Image
+                      alt={sourceName}
+                      src={getNewsTitleMedia(sourceId)}
+                      className="object-contain h-24 container mx-auto w-2/3"
+                    />
+                  </div>
+                );
+              })}
             </div>
-            <div className="w-1/3">
-              <NewsList
-                newsData={data["wsj"]}
-                newsTitle="The Wall Street Journal"
-                newsSource="wsj"
-                radarData={publicationPreviews?.["wsj"]}
-                onArticleClick={handleArticleClick}
-              />
-            </div>
-            <div className="w-1/3">
-              <NewsList
-                newsData={data["fox-news"]}
-                newsTitle="Fox News"
-                newsSource="fox-news"
-                radarData={publicationPreviews?.["fox-news"]}
-                onArticleClick={handleArticleClick}
-              />
-            </div>
+            {data.map((datum) => {
+              return (
+                <Fragment>
+                  <div className=" text-neutral-500 text-xl mb-4 sticky top-20 z-50 bg-white">
+                    {formatDateString(datum.date)} EST
+                    <Divider />
+                  </div>
+                  <div className="flex gap-4 w-full">
+                    {newsSources.map(({ sourceId }) => {
+                      return (
+                        <div className="w-1/3">
+                          <NewsList
+                            newsData={datum.articles[sourceId]}
+                            newsSource={sourceId}
+                            radarData={publicationPreviews?.[sourceId]}
+                            onArticleClick={handleArticleClick}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Fragment>
+              );
+            })}
           </div>
         )}
       </div>
@@ -120,5 +149,19 @@ export default function Home() {
   function getInitialUpperBoundDate() {
     const currentDate: Date = new Date();
     return currentDate.toISOString();
+  }
+
+  function getNewsTitleMedia(newsSource: string) {
+    switch (newsSource) {
+      case "wsj":
+        return WSJLogo;
+      case "the-washington-post":
+        return WapoLogo;
+      case "fox-news":
+        return FoxNewsLogo;
+      // TODO: change default news logo
+      default:
+        return WSJLogo;
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { Database } from "@/schema";
-import { groupByDate, groupByKey } from "@/utils/groupBy";
+import { zeroISOString } from "@/utils/zeroISOString";
 import { useEffect, useState } from "react";
 import { supabase } from "supabase";
 
@@ -8,17 +8,52 @@ const SIMILARITY_THRESHOLD = 0.5;
 export type HomepageNewsRow =
   Database["public"]["Tables"]["homepage-news"]["Row"];
 
-// [date]:
-export type HomepageDateData = {
-  [key: string]: HomepageNewsRow[];
-};
-
-// [news_source]:
-type HomepageData = {
-  [key: string]: HomepageDateData;
-};
-
 type SearchType = "search" | "similarity";
+
+type DateToArticlesObjType = {
+  [date: string]: {
+    articles: {
+      [source: string]: HomepageNewsRow[];
+    };
+  };
+};
+
+type TransformedDateToArticlesType = {
+  date: string;
+  articles: {
+    [source: string]: HomepageNewsRow[];
+  };
+};
+
+const transformHomepageNewsData = (data: HomepageNewsRow[]) => {
+  const dateToArticlesObj: DateToArticlesObjType = {};
+
+  for (const datum of data) {
+    const zerodIsoString = zeroISOString(datum.created_at!);
+    if (!dateToArticlesObj[zerodIsoString]) {
+      dateToArticlesObj[zerodIsoString] = {
+        articles: {},
+      };
+    }
+
+    if (!dateToArticlesObj[zerodIsoString].articles[datum.source_id!]) {
+      dateToArticlesObj[zerodIsoString].articles[datum.source_id!] = [];
+    }
+
+    dateToArticlesObj[zerodIsoString].articles[datum.source_id!].push(datum);
+  }
+
+  // Transform dateToArticlesObj to be array
+  const res: TransformedDateToArticlesType[] = [];
+  for (const key of Object.keys(dateToArticlesObj)) {
+    res.push({
+      date: key,
+      articles: dateToArticlesObj[key].articles,
+    });
+  }
+
+  return res.sort((a, b) => +new Date(b.date) - +new Date(a.date));
+};
 
 export const useHomepageNews = ({
   lowerBoundDate,
@@ -29,7 +64,12 @@ export const useHomepageNews = ({
   upperBoundDate: string;
   searchValue: string;
 }) => {
-  const [data, setData] = useState<HomepageData>();
+  const [data, setData] = useState<
+    {
+      date: string;
+      articles: { [key: string]: any };
+    }[]
+  >();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [searchTypeState, setSearchTypeState] =
@@ -42,7 +82,6 @@ export const useHomepageNews = ({
     query: string;
     searchType?: SearchType;
   }) => {
-    console.log("fetchin again");
     setLoading(true);
     setSearchTypeState((prevSearchType: SearchType) =>
       searchType ? searchType : prevSearchType
@@ -53,6 +92,7 @@ export const useHomepageNews = ({
         .select("*")
         .lt("created_at", upperBoundDate)
         .gt("created_at", lowerBoundDate);
+
       if (error) {
         throw error.message;
       }
@@ -86,26 +126,9 @@ export const useHomepageNews = ({
             clusteredData.push(data[i]);
           }
         }
-
-        const dataGroupedBySource = groupByKey(
-          clusteredData.sort(
-            (a, b) =>
-              new Date(b.created_at).getHours() -
-                new Date(a.created_at).getHours() || a.id - b.id
-          ),
-          "source_id"
-        );
-        setData(groupByDate(dataGroupedBySource));
+        setData(transformHomepageNewsData(clusteredData));
       } else {
-        const dataGroupedBySource = groupByKey(
-          data.sort(
-            (a, b) =>
-              new Date(b.created_at).getHours() -
-                new Date(a.created_at).getHours() || a.id - b.id
-          ),
-          "source_id"
-        );
-        setData(groupByDate(dataGroupedBySource));
+        setData(transformHomepageNewsData(data));
       }
     } catch (error) {
       setError(error as string);

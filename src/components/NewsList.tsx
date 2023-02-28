@@ -2,14 +2,7 @@ import { Button } from "antd";
 import { Fragment, useState } from "react";
 import { UpOutlined } from "@ant-design/icons";
 import classnames from "classnames";
-import type {
-  HomepageDateData,
-  HomepageNewsRow,
-} from "../hooks/useHomepageNews";
-import Image from "next/image";
-import WapoLogo from "../../public/wapo_logo.png";
-import WSJLogo from "../../public/wsj_logo.png";
-import FoxNewsLogo from "../../public/fox_news_logo.svg";
+import type { HomepageNewsRow } from "../hooks/useHomepageNews";
 import NewsPreview from "./NewsPreview";
 
 const PUBLIC_STORAGE_URL =
@@ -20,17 +13,12 @@ type NewsStackProps = {
    * TODO: type
    * array of news articles
    */
-  newsHour: HomepageNewsRow[];
+  articles: HomepageNewsRow[];
 
   /**
    * on click handler for article title
    */
   onArticleClick: (value: string) => void;
-
-  /**
-   * when article was scraped
-   */
-  createdAt: string;
 
   /**
    * source id of news website scraped from
@@ -39,17 +27,16 @@ type NewsStackProps = {
 };
 
 const NewsStack = ({
-  newsHour,
+  articles,
   onArticleClick,
-  createdAt,
   newsSource,
 }: NewsStackProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <Fragment>
-      {newsHour
-        .slice(0, isExpanded ? newsHour.length : 3)
+      {articles
+        .slice(0, isExpanded ? articles.length : 3)
         .map((news: any, index: number) => {
           return (
             <div
@@ -62,7 +49,7 @@ const NewsStack = ({
                 !isExpanded
                   ? {
                       position: `${index > 0 ? "absolute" : "static"}`,
-                      top: `${24 + 5 * index}px`,
+                      top: `${5 * index}px`,
                       left: `${12 + 5 * index}px`,
                       zIndex: `${-index}`,
                     }
@@ -71,15 +58,14 @@ const NewsStack = ({
               onClick={handleOnClick}
             >
               <div
-                className="cursor-pointer font-bold hover:underline"
+                className="cursor-pointer font-bold hover:underline mb-2"
                 onClick={(event) => {
                   event.stopPropagation();
                   onArticleClick(news.title);
                 }}
               >
-                {news.title.toUpperCase()}
+                {news.title}
               </div>
-              <div className="text-gray-400 text-sm">{createdAt} EST</div>
               <img
                 src={`${PUBLIC_STORAGE_URL}/${newsSource}/${news.id}.jpeg`}
               />
@@ -108,12 +94,7 @@ type NewsListProps = {
   /**
    * News data
    */
-  newsData: HomepageDateData;
-
-  /**
-   * title of news source
-   */
-  newsTitle: string;
+  newsData: HomepageNewsRow[];
 
   /**
    * source id of news source
@@ -133,62 +114,26 @@ type NewsListProps = {
 
 const NewsList = ({
   newsData,
-  newsTitle,
   newsSource,
   radarData,
   onArticleClick,
 }: NewsListProps) => {
   return (
     <Fragment>
-      <Image
-        alt={newsTitle}
-        src={getNewsTitleMedia(newsSource)}
-        className="object-contain h-24 container mx-auto w-2/3"
-      />
       {radarData?.length >= 10 && <NewsPreview radarData={radarData} />}
       {newsData ? (
-        Object.keys(newsData).map((date: any, index: number) => {
-          const createdAt = new Date(date).toLocaleDateString("en-us", {
-            weekday: "long",
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-            timeZone: "EST",
-          });
-
-          return (
-            <div className="relative mb-12 cursor-pointer" key={index}>
-              <div className="text-gray-500">{createdAt} EST</div>
-              <NewsStack
-                newsHour={newsData[date]}
-                createdAt={createdAt}
-                newsSource={newsSource}
-                onArticleClick={onArticleClick}
-              />
-            </div>
-          );
-        })
+        <div className="relative mb-12 cursor-pointer">
+          <NewsStack
+            articles={newsData}
+            newsSource={newsSource}
+            onArticleClick={onArticleClick}
+          />
+        </div>
       ) : (
         <div>No results found...</div>
       )}
     </Fragment>
   );
-
-  function getNewsTitleMedia(newsSource: string) {
-    switch (newsSource) {
-      case "wsj":
-        return WSJLogo;
-      case "the-washington-post":
-        return WapoLogo;
-      case "fox-news":
-        return FoxNewsLogo;
-      // TODO: change default news logo
-      default:
-        return WSJLogo;
-    }
-  }
 };
 
 export default NewsList;
