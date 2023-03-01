@@ -10,13 +10,18 @@ import WapoLogo from "../../public/wapo_logo.png";
 import WSJLogo from "../../public/wsj_logo.png";
 import FoxNewsLogo from "../../public/fox_news_logo.svg";
 import { HomepageNewsRow } from "@/hooks/useHomepageNews";
+import BreakingNews from "@/components/BreakingNews";
 
 type DateRange = {
   lowerBoundDate: string;
   upperBoundDate: string;
 };
 
-export default function Home() {
+type Props = {
+  breakingNews: any;
+};
+
+export default function Home({ breakingNews }: Props) {
   const [searchValue, setSearchValue] = useState("");
   const [dateRange, setDateRange] = useState<DateRange>({
     lowerBoundDate: getInitialLowerBoundDate(),
@@ -58,8 +63,9 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-col items-center px-24 py-10 min-h-screen">
-      <div className="max-w-7xl flex flex-col items-center">
+    <main className="flex flex-col items-center px-24 min-h-screen">
+      <BreakingNews news={breakingNews} />
+      <div className="max-w-7xl flex flex-col items-center py-10">
         <h3 className="text-stone-700 w-2/5 font-bold text-center text-3xl mb-4">
           Get the real story by tracing how coverage compares and evolves
         </h3>
@@ -113,7 +119,7 @@ export default function Home() {
                       return (
                         <div className="w-1/3" key={index}>
                           <NewsList
-                            newsData={datum.articles[sourceId].sort(
+                            newsData={datum.articles[sourceId]?.sort(
                               (a: HomepageNewsRow, b: HomepageNewsRow) =>
                                 +new Date(a.created_at!) -
                                 +new Date(b.created_at!)
@@ -171,5 +177,27 @@ export default function Home() {
       default:
         return WSJLogo;
     }
+  }
+}
+
+export async function getStaticProps() {
+  // ISR on breaking news
+  const THIRTY_MINUTES = 30 * 1000 * 60;
+  const NEWS_API_URL = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${process.env.NEWS_API_KEY}`;
+
+  try {
+    const topHeadlines = await fetch(NEWS_API_URL);
+    const { articles, status } = await topHeadlines.json();
+    if (status !== "ok" || articles.length === 0) {
+      return { notFound: true };
+    }
+    return {
+      props: {
+        breakingNews: articles,
+      },
+      revalidate: THIRTY_MINUTES,
+    };
+  } catch (error) {
+    return { notFound: true };
   }
 }
