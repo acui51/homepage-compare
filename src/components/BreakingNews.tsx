@@ -1,4 +1,3 @@
-import { useBreakingNews } from "@/hooks";
 import { useState } from "react";
 import { useSpring, animated } from "react-spring";
 
@@ -23,8 +22,12 @@ const BreakingNews = ({ news }: Props) => {
   return (
     <div className="bg-[#FFF1EF] text-red-500 w-screen py-2 truncate" key={key}>
       <animated.div style={scrolling}>
-        {news.map((article: any) => {
-          return <span className="text-sm">{article.title} | </span>;
+        {news.map((article: any, index: number) => {
+          return (
+            <span key={index} className="text-sm">
+              {article.title} |{" "}
+            </span>
+          );
         })}
       </animated.div>
     </div>
