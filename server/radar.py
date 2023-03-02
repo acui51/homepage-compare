@@ -49,15 +49,37 @@ def merge_first_and_last_names(c: Counter) -> Counter:
 
 
 def headlines_by_source(source: str, start_date=None, end_date=None) -> list[str]:
-    query = supabase_client.table("top-headlines-news").select("title, source_id").filter("source_id", "eq", source)
+    query = supabase_client.table("top-headlines-news").select("title, source_id, content").filter("source_id", "eq", source)
     if start_date is not None:
         query = query.filter("publishedAt", "gt", start_date)
     if end_date is not None:
         query = query.filter("publishedAt", "lt", end_date)
     response = query.execute()
     entries = response.data
+    # print(response.data[1]["content"], "con")
+    result = []
+    for entry in entries:
+        a = entry["title"]
+        # if "content" in entry and entry["content"] is not None:
+        #     a += "\n??\n" + entry["content"]
+        result.append(a)
 
-    return [entry["title"] for entry in entries]
+    if source == "the-wall-street-journal":
+        source = "wsj"
+    query = supabase_client.table("homepage-news").select("title, source_id").filter("source_id", "eq", source)
+    if start_date is not None:
+        query = query.filter("created_at", "gt", start_date)
+    if end_date is not None:
+        query = query.filter("created_at", "lt", end_date)
+
+    response = query.execute()
+    entries = response.data
+    for entry in entries:
+        a = entry["title"]
+        result.append(a)
+
+    # print(result, source)
+    return result
 
 
 def normalized_top_ten(c: Counter) -> list[tuple[str, float]]:
@@ -72,28 +94,31 @@ def normalized_top_ten(c: Counter) -> list[tuple[str, float]]:
 
 def entity_tuples(source: str, start_date=None, end_date=None) -> list[tuple[str, float]]:
     headlines = headlines_by_source(source, start_date=start_date, end_date=end_date)
-    ner = ner_headlines(headlines, excluded_entities=[" ".join(source.split("-")).title()])
+    ner = ner_headlines(headlines, excluded_entities=[" ".join(source.split("-")).title(), "Listen0", "Comment", "x News CHARLESTON"])
     ner = merge_first_and_last_names(ner)
+    print("normalized", normalized_top_ten(ner))
     return normalized_top_ten(ner)
 
 
 if __name__ == "__main__":
-    wapo_headlines = headlines_by_source("the-washington-post")
-    print(wapo_headlines)
-    # wapo_freq = classify_headlines(wapo_headlines)
-    # print(wapo_freq)
-    ner = ner_headlines(wapo_headlines, excluded_entities=["The Washington Post"])
+    # query = supabase_client.table("top-headlines-news").select("title, source_id, content").filter("source_id", "eq", "the-washington-post")
+    # print(query.execute().data[0]["content"])
+    # wapo_headlines = headlines_by_source("the-washington-post")
+    # print(wapo_headlines)
+    # # wapo_freq = classify_headlines(wapo_headlines)
+    # # print(wapo_freq)
+    # ner = ner_headlines(wapo_headlines, excluded_entities=["The Washington Post", "Listen0", "Comment"])
 
     # merge first and last names into a single entity
-    ner = merge_first_and_last_names(ner)
-    print(normalized_top_ten(ner))
+    # ner = merge_first_and_last_names(ner)
+    # print(normalized_top_ten(ner))
     wsj_headlines = headlines_by_source("the-wall-street-journal")
     print(wsj_headlines)
     wsj_ne = ner_headlines(wsj_headlines, excluded_entities=["The Wall Street Journal"])
     wsj_ne = merge_first_and_last_names(wsj_ne)
     print(normalized_top_ten(wsj_ne))
 
-    fox_headlines = headlines_by_source("fox-news")
-    fox_ne = ner_headlines(fox_headlines, excluded_entities=["Fox News"])
-    fox_ne = merge_first_and_last_names(fox_ne)
-    print(normalized_top_ten(fox_ne))
+    # fox_headlines = headlines_by_source("fox-news")
+    # fox_ne = ner_headlines(fox_headlines, excluded_entities=["Fox News", "Fox News CHARLESTON"])
+    # fox_ne = merge_first_and_last_names(fox_ne)
+    # print(normalized_top_ten(fox_ne))
