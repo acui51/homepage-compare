@@ -1,5 +1,6 @@
-## Homepage Compare
+## Storytracker
 The way to compare how news is protrayed on homepages
+https://homepage-compare.vercel.app/
 ![image](https://user-images.githubusercontent.com/62365251/219252852-22a959c8-337f-4803-bee4-3c4c23f6aecc.png)
 
 ## Getting Started

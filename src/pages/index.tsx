@@ -1,21 +1,46 @@
 import { useHomepageNews, usePublicationPreviews } from "@/hooks";
-import { useState } from "react";
-import { Input, Spin, DatePicker } from "antd";
+import { Fragment, useState } from "react";
+import { Input, Spin, DatePicker, Divider } from "antd";
 import type { RangePickerProps } from "antd/es/date-picker";
 import { NewsList } from "@/components";
 import dayjs from "dayjs";
+import { formatDateString } from "@/utils/formatISOstring";
+import Image from "next/image";
+import WapoLogo from "../../public/wapo_logo.png";
+import WSJLogo from "../../public/wsj_logo.png";
+import FoxNewsLogo from "../../public/fox_news_logo.svg";
+import { HomepageNewsRow } from "@/hooks/useHomepageNews";
+import BreakingNews from "@/components/BreakingNews";
 
 type DateRange = {
   lowerBoundDate: string;
   upperBoundDate: string;
 };
 
-export default function Home() {
+type Props = {
+  breakingNews: any;
+};
+
+export default function Home({ breakingNews }: Props) {
   const [searchValue, setSearchValue] = useState("");
   const [dateRange, setDateRange] = useState<DateRange>({
     lowerBoundDate: getInitialLowerBoundDate(),
     upperBoundDate: getInitialUpperBoundDate(),
   });
+  const [newsSources, setNewsSources] = useState([
+    {
+      sourceId: "the-washington-post",
+      sourceName: "The Washington Post",
+    },
+    {
+      sourceId: "wsj",
+      sourceName: "The Wall Street Journal",
+    },
+    {
+      sourceId: "fox-news",
+      sourceName: "Fox News",
+    },
+  ]);
 
   const { data, loading, error, refetch } = useHomepageNews({
     lowerBoundDate: dateRange.lowerBoundDate,
@@ -38,8 +63,9 @@ export default function Home() {
   }
 
   return (
-    <main className="flex flex-col items-center px-24 py-10 min-h-screen">
-      <div className="max-w-7xl flex flex-col items-center">
+    <main className="flex flex-col items-center px-24 min-h-screen">
+      <BreakingNews news={breakingNews} />
+      <div className="max-w-7xl flex flex-col items-center py-10">
         <h3 className="text-stone-700 w-2/5 font-bold text-center text-3xl mb-4">
           Get the real story by tracing how coverage compares and evolves
         </h3>
@@ -64,34 +90,51 @@ export default function Home() {
         {loading || !data ? (
           <Spin />
         ) : (
-          <div className="flex gap-4 w-full">
-            <div className="w-1/3">
-              <NewsList
-                newsData={data["the-washington-post"]}
-                newsTitle="The Washington Post"
-                newsSource="the-washington-post"
-                radarData={publicationPreviews?.["the-washington-post"]}
-                onArticleClick={handleArticleClick}
-              />
+          <div>
+            <div className="flex gap-4 w-full sticky top-0 z-50 bg-white">
+              {newsSources.map(({ sourceId, sourceName }) => {
+                return (
+                  <div className="w-1/3" key={sourceId}>
+                    <Image
+                      alt={sourceName}
+                      src={getNewsTitleMedia(sourceId)}
+                      className="object-contain h-24 container mx-auto w-2/3"
+                    />
+                  </div>
+                );
+              })}
             </div>
-            <div className="w-1/3">
-              <NewsList
-                newsData={data["wsj"]}
-                newsTitle="The Wall Street Journal"
-                newsSource="wsj"
-                radarData={publicationPreviews?.["wsj"]}
-                onArticleClick={handleArticleClick}
-              />
-            </div>
-            <div className="w-1/3">
-              <NewsList
-                newsData={data["fox-news"]}
-                newsTitle="Fox News"
-                newsSource="fox-news"
-                radarData={publicationPreviews?.["fox-news"]}
-                onArticleClick={handleArticleClick}
-              />
-            </div>
+            {data.map((datum) => {
+              return (
+                <Fragment key={datum.date}>
+                  <div className="text-neutral-500 text-xl pb-2 sticky top-20 z-50 bg-white">
+                    <Divider>
+                      <span className="text-neutral-500 text-xl font-medium">
+                        {formatDateString(datum.date)} EST
+                      </span>
+                    </Divider>
+                  </div>
+                  <div className="flex gap-4 w-full">
+                    {newsSources.map(({ sourceId }, index) => {
+                      return (
+                        <div className="w-1/3" key={index}>
+                          <NewsList
+                            newsData={datum.articles[sourceId]?.sort(
+                              (a: HomepageNewsRow, b: HomepageNewsRow) =>
+                                +new Date(a.created_at!) -
+                                +new Date(b.created_at!)
+                            )}
+                            newsSource={sourceId}
+                            radarData={publicationPreviews?.[sourceId]}
+                            onArticleClick={handleArticleClick}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Fragment>
+              );
+            })}
           </div>
         )}
       </div>
@@ -120,5 +163,41 @@ export default function Home() {
   function getInitialUpperBoundDate() {
     const currentDate: Date = new Date();
     return currentDate.toISOString();
+  }
+
+  function getNewsTitleMedia(newsSource: string) {
+    switch (newsSource) {
+      case "wsj":
+        return WSJLogo;
+      case "the-washington-post":
+        return WapoLogo;
+      case "fox-news":
+        return FoxNewsLogo;
+      // TODO: change default news logo
+      default:
+        return WSJLogo;
+    }
+  }
+}
+
+export async function getStaticProps() {
+  // ISR on breaking news
+  const THIRTY_MINUTES = 30 * 1000 * 60;
+  const NEWS_API_URL = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${process.env.NEWS_API_KEY}`;
+
+  try {
+    const topHeadlines = await fetch(NEWS_API_URL);
+    const { articles, status } = await topHeadlines.json();
+    if (status !== "ok" || articles.length === 0) {
+      return { notFound: true };
+    }
+    return {
+      props: {
+        breakingNews: articles,
+      },
+      revalidate: THIRTY_MINUTES,
+    };
+  } catch (error) {
+    return { notFound: true };
   }
 }
