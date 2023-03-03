@@ -11,6 +11,7 @@ import WSJLogo from "../../public/wsj_logo.png";
 import FoxNewsLogo from "../../public/fox_news_logo.svg";
 import { HomepageNewsRow } from "@/hooks/useHomepageNews";
 import BreakingNews from "@/components/BreakingNews";
+import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 
 type DateRange = {
   lowerBoundDate: string;
@@ -41,21 +42,42 @@ export default function Home({ breakingNews }: Props) {
       sourceName: "Fox News",
     },
   ]);
+  const [page, setPage] = useState(0);
+  const [lastElement, setLastElement] = useState(null);
 
-  const { data, loading, error, refetch } = useHomepageNews({
-    lowerBoundDate: dateRange.lowerBoundDate,
-    upperBoundDate: dateRange.upperBoundDate,
-    searchValue,
-  });
+  const { data, loading, error, hasNextPage, refetch, resetHasNextPage } =
+    useHomepageNews({
+      lowerBoundDate: dateRange.lowerBoundDate,
+      upperBoundDate: dateRange.upperBoundDate,
+      searchValue,
+      page,
+    });
 
   const { data: publicationPreviews } = usePublicationPreviews({
     lowerBoundDate: dateRange.lowerBoundDate,
     upperBoundDate: dateRange.upperBoundDate,
   });
 
+  useIntersectionObserver({
+    observedElement: lastElement,
+    callback: (entries: IntersectionObserverEntry[]) => {
+      if (!hasNextPage) return;
+      const first = entries[0];
+      if (first.isIntersecting) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    },
+  });
+
   const handleArticleClick = (value: string) => {
     setSearchValue(value);
-    refetch({ query: value, searchType: "similarity" });
+    setPage(0);
+    refetch({ query: value, searchType: "similarity", page: 0 });
+  };
+
+  const handleSearch = (value: string) => {
+    setPage(0);
+    refetch({ query: value, searchType: "search", page: 0 });
   };
 
   if (error) {
@@ -73,7 +95,7 @@ export default function Home({ breakingNews }: Props) {
           size="large"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          onSearch={(value) => refetch({ query: value, searchType: "search" })}
+          onSearch={(value) => handleSearch(value)}
           placeholder="Search for anything within the date range"
           className="w-3/5 mb-16"
         />
@@ -87,7 +109,7 @@ export default function Home({ breakingNews }: Props) {
           onOk={onOk}
           className="w-84 self-start"
         />
-        {loading || !data ? (
+        {data.length === 0 ? (
           <Spin />
         ) : (
           <div>
@@ -117,7 +139,16 @@ export default function Home({ breakingNews }: Props) {
                   <div className="flex gap-4 w-full">
                     {newsSources.map(({ sourceId }, index) => {
                       return (
-                        <div className="w-1/3" key={index}>
+                        <div
+                          className="w-1/3"
+                          key={index}
+                          // @ts-ignore
+                          ref={
+                            index === newsSources.length - 1
+                              ? setLastElement
+                              : undefined
+                          }
+                        >
                           <NewsList
                             newsData={datum.articles[sourceId]?.sort(
                               (a: HomepageNewsRow, b: HomepageNewsRow) =>
@@ -137,6 +168,7 @@ export default function Home({ breakingNews }: Props) {
             })}
           </div>
         )}
+        {loading && data.length > 0 && <Spin />}
       </div>
     </main>
   );
@@ -151,6 +183,8 @@ export default function Home({ breakingNews }: Props) {
         lowerBoundDate: lowerBoundTime.toISOString(),
         upperBoundDate: upperBoundTime.toISOString(),
       });
+      setPage(0);
+      resetHasNextPage();
     }
   }
 
@@ -181,19 +215,44 @@ export default function Home({ breakingNews }: Props) {
 }
 
 export async function getStaticProps() {
+  const { Configuration, OpenAIApi } = require("openai");
+
   // ISR on breaking news
   const THIRTY_MINUTES = 30 * 1000 * 60;
   const NEWS_API_URL = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${process.env.NEWS_API_KEY}`;
-
   try {
     const topHeadlines = await fetch(NEWS_API_URL);
     const { articles, status } = await topHeadlines.json();
     if (status !== "ok" || articles.length === 0) {
       return { notFound: true };
     }
+
+    const configuration = new Configuration({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    const openai = new OpenAIApi(configuration);
+
+    const prompt = `
+        Given a list of headlines, write a search query for each headline
+        that users would commonly use to search for similar news stories on the same topic.
+        Each query may contain words that are not in the original headline,
+        but are relevant to the overall topic. For example, based on the headline
+        "U.S. analysis keeps covid 'lab leak' theory in play", the query would be
+        something like "COVID origin theory".
+        Now, given this comma delimited list of headlines, output only a JSON array of
+        queries for them: ${articles
+          .map((article: any) => article.title)
+          .join(", ")} . And don't add the word "Answer".
+    `;
+
+    const response = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+    });
+
     return {
       props: {
-        breakingNews: articles,
+        breakingNews: response.data,
       },
       revalidate: THIRTY_MINUTES,
     };

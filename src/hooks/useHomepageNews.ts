@@ -3,7 +3,7 @@ import { zeroISOString } from "@/utils/zeroISOString";
 import { useEffect, useState } from "react";
 import { supabase } from "supabase";
 
-const SIMILARITY_THRESHOLD = 0.5;
+const SIMILARITY_THRESHOLD = 0.3;
 
 export type HomepageNewsRow =
   Database["public"]["Tables"]["homepage-news"]["Row"];
@@ -23,6 +23,14 @@ type TransformedDateToArticlesType = {
   articles: {
     [source: string]: HomepageNewsRow[];
   };
+};
+
+export const getPagination = (page: number, size = 180) => {
+  const limit = size ? +size : 3;
+  const from = page ? page * limit : 0;
+  const to = page ? from + size - 1 : size - 1;
+
+  return { from, to };
 };
 
 const transformHomepageNewsData = (data: HomepageNewsRow[]) => {
@@ -59,42 +67,60 @@ export const useHomepageNews = ({
   lowerBoundDate,
   upperBoundDate,
   searchValue,
+  page,
 }: {
   lowerBoundDate: string;
   upperBoundDate: string;
   searchValue: string;
+  page: number;
 }) => {
   const [data, setData] = useState<
     {
       date: string;
       articles: { [key: string]: any };
     }[]
-  >();
+  >([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [searchTypeState, setSearchTypeState] =
     useState<SearchType>("similarity");
+  const [hasNextPage, setHasNextPage] = useState(true);
+
+  const resetHasNextPage = () => {
+    setHasNextPage(true);
+  };
 
   const fetchHomepageNews = async ({
     query,
     searchType,
+    page,
   }: {
     query: string;
     searchType?: SearchType;
+    page: number;
   }) => {
     setLoading(true);
     setSearchTypeState((prevSearchType: SearchType) =>
       searchType ? searchType : prevSearchType
     );
+
     try {
+      const { from, to } = getPagination(page);
       const { data, error } = await supabase
         .from("homepage-news")
         .select("*")
         .lt("created_at", upperBoundDate)
-        .gt("created_at", lowerBoundDate);
+        .gt("created_at", lowerBoundDate)
+        .order("created_at", { ascending: false })
+        .range(from, to);
 
       if (error) {
         throw error.message;
+      }
+
+      if (data.length === 0) {
+        setHasNextPage(false);
+        return;
       }
 
       const reqBody = {
@@ -102,6 +128,9 @@ export const useHomepageNews = ({
           source_sentence: query,
           sentences: data.map((datum) => {
             let text = datum.title;
+            if (!text) {
+              return "";
+            }
             if (datum.description) text += ` ${datum.description}`;
             return text;
           }),
@@ -120,15 +149,27 @@ export const useHomepageNews = ({
         });
         const { data: similarityScores } = await res.json();
 
-        let clusteredData = [];
+        let clusteredData: HomepageNewsRow[] = [];
+        console.log("similarityScores", similarityScores);
         for (let i = 0; i < similarityScores.length; i++) {
           if (similarityScores[i] > SIMILARITY_THRESHOLD) {
             clusteredData.push(data[i]);
           }
         }
-        setData(transformHomepageNewsData(clusteredData));
+
+        page === 0
+          ? setData(transformHomepageNewsData(clusteredData))
+          : setData((prevData) => [
+              ...prevData,
+              ...transformHomepageNewsData(clusteredData),
+            ]);
       } else {
-        setData(transformHomepageNewsData(data));
+        page === 0
+          ? setData(transformHomepageNewsData(data))
+          : setData((prevData) => [
+              ...prevData,
+              ...transformHomepageNewsData(data),
+            ]);
       }
     } catch (error) {
       setError(error as string);
@@ -138,8 +179,15 @@ export const useHomepageNews = ({
   };
 
   useEffect(() => {
-    fetchHomepageNews({ query: searchValue });
-  }, [lowerBoundDate, upperBoundDate]);
+    fetchHomepageNews({ query: searchValue, page: page });
+  }, [lowerBoundDate, upperBoundDate, page]);
 
-  return { data, loading, error, refetch: fetchHomepageNews };
+  return {
+    data,
+    loading,
+    error,
+    hasNextPage,
+    refetch: fetchHomepageNews,
+    resetHasNextPage,
+  };
 };
