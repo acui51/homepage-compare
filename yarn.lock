@@ -410,6 +410,11 @@
   dependencies:
     tslib "^2.4.0"
 
+"@tailwindcss/line-clamp@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/line-clamp/-/line-clamp-0.4.2.tgz#f353c5a8ab2c939c6267ac5b907f012e5ee130f9"
+  integrity sha512-HFzAQuqYCjyy/SX9sLGB1lroPzmcnWv1FHkIpmypte10hptf4oPUfucryMKovZh2u0uiS9U5Ty3GghWfEJGwVw==
+
 "@types/d3-color@*":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@types/d3-color/-/d3-color-3.1.0.tgz#6594da178ded6c7c3842f3cc0ac84b156f12f2d4"
