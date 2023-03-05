@@ -43,6 +43,7 @@ const BreakingNews = ({ news, onClick }: Props) => {
             <span
               className="mr-2 cursor-pointer hover:underline"
               onClick={() => onClick(strippedTitle)}
+              key={index}
             >
               <span key={index} className="text-sm pr-2">
                 {strippedTitle}
