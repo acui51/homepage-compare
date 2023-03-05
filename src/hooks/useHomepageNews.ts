@@ -159,7 +159,7 @@ export const useHomepageNews = ({
           );
 
           throw Error(
-            `Model is loading. Refetching in ${similarityScores.estimatedTime} seconds`
+            `Model is loading. Refetching in ${similarityScores.estimated_time} seconds`
           );
         }
 
@@ -186,8 +186,8 @@ export const useHomepageNews = ({
             ]);
       }
       setLoading(false);
-    } catch (error) {
-      setError(error as string);
+    } catch (error: any) {
+      setError(error.message as string);
     }
   };
 
