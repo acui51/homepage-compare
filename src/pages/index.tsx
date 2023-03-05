@@ -107,9 +107,9 @@ export default function Home({ breakingNews }: Props) {
           className="w-84 self-start"
         />
         {loading && page === 0 ? (
-          <div>
+          <div className="flex-col flex">
             <Spin />
-            {error && <span>{error}</span>}
+            {error && <span className="text-gray-400">{error}</span>}
           </div>
         ) : (
           <div>
