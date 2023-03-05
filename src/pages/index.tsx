@@ -12,6 +12,7 @@ import FoxNewsLogo from "../../public/fox_news_logo.svg";
 import { HomepageNewsRow } from "@/hooks/useHomepageNews";
 import BreakingNews from "@/components/BreakingNews";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
+import type { SearchType } from "@/hooks/useHomepageNews";
 
 type DateRange = {
   lowerBoundDate: string;
@@ -69,21 +70,21 @@ export default function Home({ breakingNews }: Props) {
     },
   });
 
-  const handleArticleClick = (value: string) => {
-    setSearchValue(value);
-    setPage(0);
-    refetch({ query: value, searchType: "similarity", page: 0 });
-  };
-
-  const handleSearch = useCallback((value: string) => {
-    setSearchValue(value);
-    setPage(0);
-    refetch({ query: value, searchType: "search", page: 0 });
-  }, []);
+  const handleSearchFill = useCallback(
+    (value: string, searchType: SearchType) => {
+      setSearchValue(value);
+      setPage(0);
+      refetch({ query: value, searchType: searchType, page: 0 });
+    },
+    []
+  );
 
   return (
     <main className="flex flex-col items-center px-24 min-h-screen">
-      <BreakingNews news={breakingNews} onClick={handleSearch} />
+      <BreakingNews
+        news={breakingNews}
+        onClick={(value) => handleSearchFill(value, "search")}
+      />
       <div className="max-w-7xl flex flex-col items-center py-10">
         <h3 className="text-stone-700 w-2/5 font-bold text-center text-3xl mb-4">
           Get the real story by tracing how coverage compares and evolves
@@ -92,7 +93,7 @@ export default function Home({ breakingNews }: Props) {
           size="large"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          onSearch={(value) => handleSearch(value)}
+          onSearch={(value) => handleSearchFill(value, "search")}
           placeholder="Search for anything within the date range"
           className="w-3/5 mb-16"
         />
@@ -158,7 +159,9 @@ export default function Home({ breakingNews }: Props) {
                             )}
                             newsSource={sourceId}
                             radarData={publicationPreviews?.[sourceId]}
-                            onArticleClick={handleArticleClick}
+                            onArticleClick={(value) =>
+                              handleSearchFill(value, "similarity")
+                            }
                           />
                         </div>
                       );
@@ -237,9 +240,9 @@ export async function getStaticProps() {
         Given a list of headlines, write a search query for each headline
         that users would commonly use to search for similar news stories on the same topic.
         Each query may contain words that are not in the original headline,
-        but are relevant to the overall topic. For example, based on the headline
-        "U.S. analysis keeps covid 'lab leak' theory in play", the query would be
-        something like "COVID origin theory".
+        but are relevant to the overall topic. For example, based on the input
+        "U.S. analysis keeps covid 'lab leak' theory in play, Balloon Incident Reveals More Than Spying as Competition With China Intensifies", the output would be
+        something like ["COVID origin theory", "Chinese balloon spying incident"] in JSON array format.
         Now, given this comma delimited list of headlines, output only a JSON array of
         queries for them: ${articles
           .map((article: any) => article.title)

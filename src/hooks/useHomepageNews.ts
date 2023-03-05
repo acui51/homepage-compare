@@ -8,7 +8,7 @@ const SIMILARITY_THRESHOLD = 0.3;
 export type HomepageNewsRow =
   Database["public"]["Tables"]["homepage-news"]["Row"];
 
-type SearchType = "search" | "similarity";
+export type SearchType = "search" | "similarity";
 
 type DateToArticlesObjType = {
   [date: string]: {
