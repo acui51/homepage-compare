@@ -25,15 +25,15 @@ type TransformedDateToArticlesType = {
   };
 };
 
-export const getPagination = (page: number, size = 180) => {
+function getPagination(page: number, size = 180) {
   const limit = size ? +size : 3;
   const from = page ? page * limit : 0;
   const to = page ? from + size - 1 : size - 1;
 
   return { from, to };
-};
+}
 
-const transformHomepageNewsData = (data: HomepageNewsRow[]) => {
+function transformHomepageNewsData(data: HomepageNewsRow[]) {
   const dateToArticlesObj: DateToArticlesObjType = {};
 
   for (const datum of data) {
@@ -61,7 +61,7 @@ const transformHomepageNewsData = (data: HomepageNewsRow[]) => {
   }
 
   return res.sort((a, b) => +new Date(b.date) - +new Date(a.date));
-};
+}
 
 export const useHomepageNews = ({
   lowerBoundDate,
@@ -100,6 +100,7 @@ export const useHomepageNews = ({
     page: number;
   }) => {
     setLoading(true);
+    setError("");
     setSearchTypeState((prevSearchType: SearchType) =>
       searchType ? searchType : prevSearchType
     );
@@ -120,6 +121,7 @@ export const useHomepageNews = ({
 
       if (data.length === 0) {
         setHasNextPage(false);
+        setLoading(false);
         return;
       }
 
@@ -149,8 +151,20 @@ export const useHomepageNews = ({
         });
         const { data: similarityScores } = await res.json();
 
+        if (similarityScores.estimated_time) {
+          // Refetch
+          setTimeout(
+            () => fetchHomepageNews({ query, searchType, page }),
+            similarityScores.estimated_time * 1000
+          );
+
+          throw Error(
+            `Model is loading. Refetching in ${similarityScores.estimatedTime} seconds`
+          );
+        }
+
         let clusteredData: HomepageNewsRow[] = [];
-        console.log("similarityScores", similarityScores);
+
         for (let i = 0; i < similarityScores.length; i++) {
           if (similarityScores[i] > SIMILARITY_THRESHOLD) {
             clusteredData.push(data[i]);
@@ -171,10 +185,9 @@ export const useHomepageNews = ({
               ...transformHomepageNewsData(data),
             ]);
       }
+      setLoading(false);
     } catch (error) {
       setError(error as string);
-    } finally {
-      setLoading(false);
     }
   };
 

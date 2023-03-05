@@ -1,5 +1,5 @@
 import { useHomepageNews, usePublicationPreviews } from "@/hooks";
-import { Fragment, useState } from "react";
+import { Fragment, useCallback, useState } from "react";
 import { Input, Spin, DatePicker, Divider } from "antd";
 import type { RangePickerProps } from "antd/es/date-picker";
 import { NewsList } from "@/components";
@@ -75,15 +75,11 @@ export default function Home({ breakingNews }: Props) {
     refetch({ query: value, searchType: "similarity", page: 0 });
   };
 
-  const handleSearch = (value: string) => {
+  const handleSearch = useCallback((value: string) => {
     setSearchValue(value);
     setPage(0);
     refetch({ query: value, searchType: "search", page: 0 });
-  };
-
-  if (error) {
-    return <div>Error...</div>;
-  }
+  }, []);
 
   return (
     <main className="flex flex-col items-center px-24 min-h-screen">
@@ -110,8 +106,11 @@ export default function Home({ breakingNews }: Props) {
           onOk={onOk}
           className="w-84 self-start"
         />
-        {data.length === 0 ? (
-          <Spin />
+        {loading && page === 0 ? (
+          <div>
+            <Spin />
+            {error && <span>{error}</span>}
+          </div>
         ) : (
           <div>
             <div className="flex gap-4 w-full sticky top-0 z-50 bg-white">
@@ -127,6 +126,7 @@ export default function Home({ breakingNews }: Props) {
                 );
               })}
             </div>
+            {data.length === 0 && <div>No results found...</div>}
             {data.map((datum) => {
               return (
                 <Fragment key={datum.date}>
@@ -169,7 +169,7 @@ export default function Home({ breakingNews }: Props) {
             })}
           </div>
         )}
-        {loading && data.length > 0 && <Spin />}
+        {loading && page > 0 && <Spin />}
       </div>
     </main>
   );
