@@ -76,6 +76,7 @@ export default function Home({ breakingNews }: Props) {
   };
 
   const handleSearch = (value: string) => {
+    setSearchValue(value);
     setPage(0);
     refetch({ query: value, searchType: "search", page: 0 });
   };
@@ -86,7 +87,7 @@ export default function Home({ breakingNews }: Props) {
 
   return (
     <main className="flex flex-col items-center px-24 min-h-screen">
-      <BreakingNews news={breakingNews} />
+      <BreakingNews news={breakingNews} onClick={handleSearch} />
       <div className="max-w-7xl flex flex-col items-center py-10">
         <h3 className="text-stone-700 w-2/5 font-bold text-center text-3xl mb-4">
           Get the real story by tracing how coverage compares and evolves

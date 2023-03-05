@@ -40,8 +40,6 @@ export default async function handler(
 
   const { body } = req;
 
-  console.log("body", body);
-
   try {
     const similarityScores = await fetchSimilarSentences(JSON.parse(body));
     res.status(200).json({ data: similarityScores });

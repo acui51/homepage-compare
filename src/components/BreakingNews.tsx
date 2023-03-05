@@ -3,9 +3,11 @@ import { useSpring, animated } from "react-spring";
 
 type Props = {
   news: any;
+
+  onClick: (value: string) => void;
 };
 
-const BreakingNews = ({ news }: Props) => {
+const BreakingNews = ({ news, onClick }: Props) => {
   const [key, setKey] = useState(1);
 
   const scrolling = useSpring({
@@ -20,7 +22,6 @@ const BreakingNews = ({ news }: Props) => {
   });
 
   const splitNews = news.choices[0].message.content.trim().split("\n");
-
   return (
     <div className="bg-[#FFF1EF] text-red-500 w-screen py-2 truncate" key={key}>
       <animated.div style={scrolling}>
@@ -33,10 +34,20 @@ const BreakingNews = ({ news }: Props) => {
             return null;
           }
 
-          const strippedTitle = articleTitle.replace(/,"]/g, "");
+          const strippedTitle = articleTitle
+            .replaceAll(",", "")
+            .replaceAll('"', "")
+            .trim();
+
           return (
-            <span key={index} className="text-sm">
-              {strippedTitle} |{" "}
+            <span
+              className="mr-2 cursor-pointer hover:underline"
+              onClick={() => onClick(strippedTitle)}
+            >
+              <span key={index} className="text-sm pr-2">
+                {strippedTitle}
+              </span>
+              {index !== splitNews.length - 1 && <span>|</span>}
             </span>
           );
         })}
