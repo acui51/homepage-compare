@@ -137,7 +137,7 @@ export default function Home({ breakingNews }: Props) {
                       </span>
                     </Divider>
                   </div>
-                  <div className="flex gap-4 w-full">
+                  <div className="px-2 flex gap-4 w-full">
                     {newsSources.map(({ sourceId }, index) => {
                       return (
                         <div
