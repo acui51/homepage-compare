@@ -49,8 +49,9 @@ const NewsStack = ({
                 !isExpanded
                   ? {
                       position: `${index > 0 ? "absolute" : "static"}`,
-                      top: `${4 + 5 * index}px`,
-                      left: `${12 + 5 * index}px`,
+                      top: `${+3 * index}px`,
+                      left: `${2 + 3 * index}px`,
+                      right: `-${2 + 3 * index}px`,
                       zIndex: `${-index}`,
                     }
                   : {}
@@ -58,7 +59,7 @@ const NewsStack = ({
               onClick={handleOnClick}
             >
               <div
-                className="cursor-pointer font-bold hover:underline mb-2"
+                className="line-clamp-2 cursor-pointer font-bold hover:underline mb-2"
                 onClick={(event) => {
                   event.stopPropagation();
                   onArticleClick(news.title);

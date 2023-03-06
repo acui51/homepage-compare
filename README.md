@@ -1,8 +1,7 @@
 ## Storytracker
 The way to compare how news is protrayed on homepages
 https://homepage-compare.vercel.app/
-![image](https://user-images.githubusercontent.com/62365251/219252852-22a959c8-337f-4803-bee4-3c4c23f6aecc.png)
-
+<img width="1417" alt="image" src="https://user-images.githubusercontent.com/62365251/222364499-63e159f0-0639-40d7-a3bc-229910690771.png">
 ## Getting Started
 
 Copy `.env.local` from Notion into parent directory
