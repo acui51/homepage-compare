@@ -90,7 +90,7 @@ def normalized_top_ten(c: Counter):
     # Return the top ten entities, which will be used for the ten vertices of the radar chart.
     total_count = sum(c.values())
     c = {name: count / total_count for name, count in c.items()}
-    top_ten = Counter(c).most_common(100)
+    top_ten = Counter(c).most_common(10)
 
     return top_ten
 
