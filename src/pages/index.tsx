@@ -79,12 +79,14 @@ export default function Home({ breakingNews }: Props) {
     []
   );
 
+  const handleBreakingNewsClick = useCallback(
+    (value: string) => handleSearchFill(value, "search"),
+    [handleSearchFill]
+  );
+
   return (
     <main className="flex flex-col items-center px-24 min-h-screen">
-      <BreakingNews
-        news={breakingNews}
-        onClick={(value) => handleSearchFill(value, "search")}
-      />
+      <BreakingNews news={breakingNews} onClick={handleBreakingNewsClick} />
       <div className="max-w-7xl flex flex-col items-center py-10">
         <h3 className="text-stone-700 w-2/5 font-bold text-center text-3xl mb-4">
           Get the real story by tracing how coverage compares and evolves
