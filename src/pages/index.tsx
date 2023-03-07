@@ -2,7 +2,7 @@ import { useHomepageNews, usePublicationPreviews } from "@/hooks";
 import { Fragment, useCallback, useState } from "react";
 import { Input, Spin, DatePicker, Divider } from "antd";
 import type { RangePickerProps } from "antd/es/date-picker";
-import { NewsList } from "@/components";
+import { NewsList, NewsPreview } from "@/components";
 import dayjs from "dayjs";
 import { formatDateString } from "@/utils/formatISOstring";
 import Image from "next/image";
@@ -128,7 +128,7 @@ export default function Home({ breakingNews }: Props) {
               })}
             </div>
             {data.length === 0 && <div>No results found...</div>}
-            {data.map((datum) => {
+            {data.map((datum, index) => {
               return (
                 <Fragment key={datum.date}>
                   <div className="text-neutral-500 text-xl pb-2 sticky top-20 z-50 bg-white">
@@ -137,6 +137,13 @@ export default function Home({ breakingNews }: Props) {
                         {formatDateString(datum.date)} EST
                       </span>
                     </Divider>
+                  </div>
+                  <div className="px-2 flex gap-4 w-full">
+                    {newsSources.map(({ sourceId }) => {{
+                      return index === 0 && publicationPreviews?.[sourceId]?.length >= 10 && Date.parse(dateRange.upperBoundDate) - Date.parse(dateRange.lowerBoundDate) >= 86400000 && (
+                        <NewsPreview radarData={publicationPreviews?.[sourceId]} />
+                      )}
+                    })}
                   </div>
                   <div className="px-2 flex gap-4 w-full">
                     {newsSources.map(({ sourceId }, index) => {
