@@ -37,7 +37,7 @@ export default function LandingPage() {
                     <div className="h-full w-full border border-[#D1D9E2] rounded-xl p-5">
                         <h3 className="font-sans font-bold text-[#5F6D7E] text-md mb-5">Compare density of coverage across topics for each individual newsroom.</h3>
                         <p className="mt-2.5 text-xs text-[#5F6D7E] font-light">There are radar charts capturing entities most covered in newsroom coverage. By clicking on
-                            a publication's logo, you can explore the radar chart and its vertices.</p>
+                            a publication&apos;s logo, you can explore the radar chart and its vertices.</p>
                         <AiOutlineArrowRight style={{ color: '#5F6D7E', marginTop: '20px' }} size={14} />
                     </div>
                 </div>
