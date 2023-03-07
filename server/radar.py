@@ -85,15 +85,94 @@ def headlines_by_source(source: str, start_date=None, end_date=None) -> list[str
     return result
 
 
-def normalized_top_ten(c: Counter) -> list[tuple[str, float]]:
+def normalized_top_ten(c: Counter):
     # Normalize the counts to get the relative proportion of each entity in the Counter object.
     # Return the top ten entities, which will be used for the ten vertices of the radar chart.
     total_count = sum(c.values())
     c = {name: count / total_count for name, count in c.items()}
-    top_ten = Counter(c).most_common(10)
+    top_ten = Counter(c).most_common(100)
 
     return top_ten
 
+
+def overall_normalized_top_ten(c: list[Counter]) -> dict[str, list[tuple[str, float]]]:
+    # Merge the Counter objects in the list and return the normalized top ten entities.
+    out = Counter()
+    for counter in c:
+        out += counter
+
+    keys = ["the-washington-post", "the-wall-street-journal", "fox-news"]
+    result = {}
+    for cntr in c:
+        result[keys[c.index(cntr)]] = normalized_top_ten(cntr)
+
+    return result
+
+
+def most_prominent(source: dict[str, Counter]) -> dict[str, Counter]:
+    # Find the entities that all the sources have in common in their Counter objects.
+    # Return a dict mapping sources to a new Counter object with only the common entities.
+
+    common_entities = set()
+    common_counters = Counter()
+    top_ten = Counter()
+    for s, counter in source.items():
+        if s != "the-wall-street-journal":
+            top_ten.update(counter)
+            common_entities.update(counter.keys())
+    top_ten_keys = [k for k, v in top_ten.most_common(10)]
+    print("top_ten_keys ", top_ten_keys)
+
+    for s, counter in source.items():
+        if s != "the-wall-street-journal":
+            common_entities.intersection_update(counter.keys())
+    print("common_counts ", common_counters.most_common(10))
+    # Create a new Counter object for each source with only the common entities.
+    out = {}
+    for source_name, counter in source.items():
+        out[source_name] = Counter()
+        for entity in common_entities:
+            out[source_name][entity] = counter[entity]
+        # If the number of common entities is less than 10, pad the list with entities from a combined Counter object.
+        combined = Counter()
+        for c in source.values():
+            combined.update(c)
+        if len(out[source_name]) < 10:
+            for entity, count in combined:
+                if entity not in out[source_name]:
+                    out[source_name][entity] = 0
+
+        # Filter on top_ten_keys.
+        for entity in out[source_name].copy():
+            if entity not in top_ten_keys:
+                del out[source_name][entity]
+
+    return out
+
+
+def normalize_sources(d: dict[str, Counter]) -> dict[str, dict[str, float]]:
+    # Normalize the counts in each Counter object to get the relative proportion of each entity.
+    # Return a dict mapping sources to a dict mapping entities to their normalized counts.
+    out = {}
+    counter_with_top_keys = Counter()
+    for source, counter in d.items():
+        counter_with_top_keys.update(counter)
+
+    for source, counter in d.items():
+        out[source] = {}
+        total_count = sum(counter.values())
+        for entity, count in counter.items():
+            out[source][entity] = count / total_count
+
+    return out
+
+def prominent_ten(d: dict[str, Counter]) -> list:
+    # Given an output from most_prominent, return the top ten entities that each source has in common.
+    out = []
+    for source, counter in d.items():
+        out.append(normalized_top_ten(counter))
+
+    return out
 
 def entity_tuples(source: str, start_date=None, end_date=None) -> list[tuple[str, float]]:
     headlines = headlines_by_source(source, start_date=start_date, end_date=end_date)
@@ -106,7 +185,7 @@ def entity_tuples(source: str, start_date=None, end_date=None) -> list[tuple[str
 if __name__ == "__main__":
     # query = supabase_client.table("top-headlines-news").select("title, source_id, content").filter("source_id", "eq", "the-washington-post")
     # print(query.execute().data[0]["content"])
-    # wapo_headlines = headlines_by_source("the-washington-post")
+    wapo_headlines = headlines_by_source("the-washington-post")
     # print(wapo_headlines)
     # # wapo_freq = classify_headlines(wapo_headlines)
     # # print(wapo_freq)
@@ -116,12 +195,28 @@ if __name__ == "__main__":
     # ner = merge_first_and_last_names(ner)
     # print(normalized_top_ten(ner))
     wsj_headlines = headlines_by_source("the-wall-street-journal")
+    wapo_ne = ner_headlines(wapo_headlines, excluded_entities=["The Washington Post", "Listen0", "Comment"])
     print(wsj_headlines)
     wsj_ne = ner_headlines(wsj_headlines, excluded_entities=["The Wall Street Journal"])
-    wsj_ne = merge_first_and_last_names(wsj_ne)
-    print(normalized_top_ten(wsj_ne))
+    # wsj_ne = merge_first_and_last_names(wsj_ne)
+    # merge counter objects
 
-    # fox_headlines = headlines_by_source("fox-news")
-    # fox_ne = ner_headlines(fox_headlines, excluded_entities=["Fox News", "Fox News CHARLESTON"])
+    fox_headlines = headlines_by_source("fox-news")
+    fox_ne = ner_headlines(fox_headlines, excluded_entities=["Fox News", "Fox News CHARLESTON"])
     # fox_ne = merge_first_and_last_names(fox_ne)
+    # print(normalized_top_ten(wapo_ne))
+    # remove keys from wapo_ne that are not the normalized
+
+    # wapo_ne = {k: v for k, v in wapo_ne.items() if k in [x[0] for x in normalized_top_ten(wapo_ne | wsj_ne | fox_ne)]}
+    # wsj_ne = {k: v for k, v in wsj_ne.items() if k in [x[0] for x in normalized_top_ten(wapo_ne | wsj_ne | fox_ne)]}
+    # fox_ne = {k: v for k, v in fox_ne.items() if k in [x[0] for x in normalized_top_ten(wapo_ne | wsj_ne | fox_ne)]}
+    # print(normalized_top_ten(wapo_ne))
+    # print(normalized_top_ten(wsj_ne))
+    # print(normalized_top_ten(fox_ne))
+
+    mp = most_prominent({"the-washington-post": wapo_ne, "the-wall-street-journal": wsj_ne, "fox-news": fox_ne})
+    print(mp)
+    for elem in mp.values():
+        print(normalized_top_ten(elem))
+
     # print(normalized_top_ten(fox_ne))
