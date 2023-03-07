@@ -1,4 +1,4 @@
-import { useState, memo } from "react";
+import { useState, memo, useEffect } from "react";
 import { useSpring, animated } from "react-spring";
 
 type Props = {
@@ -10,6 +10,7 @@ type Props = {
 const BreakingNews = ({ news, onClick }: Props) => {
   const [key, setKey] = useState(1);
   const [error, setError] = useState("");
+  const [splitNews, setSplitNews] = useState([]);
 
   const scrolling = useSpring({
     from: { transform: "translate(60%,0)" },
@@ -22,12 +23,17 @@ const BreakingNews = ({ news, onClick }: Props) => {
     loop: true,
   });
 
-  let splitNews = [];
-  try {
-    splitNews = JSON.parse(news.choices[0].message.content);
-  } catch (error: any) {
-    setError(error.message);
-  }
+  useEffect(() => {
+    if (Object.keys(news).length === 0) {
+      return;
+    }
+    try {
+      setSplitNews(JSON.parse(news.choices[0].message.content));
+    } catch (error: any) {
+      console.log("error", error);
+      setError(error.message);
+    }
+  }, [news]);
 
   return (
     <div className="bg-[#FFF1EF] text-red-500 w-screen py-2 truncate" key={key}>
