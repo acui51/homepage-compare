@@ -20,7 +20,10 @@ def ner_headlines(headlines: list[str], excluded_entities=None) -> Counter:
         excluded_entities = []
     out = Counter()  # Might be simpler to just use a dict, but Counter also has some useful methods (used below).
     for headline in headlines:
-        tokens = word_tokenize(headline)
+        try:
+            tokens = word_tokenize(headline)
+        except TypeError:
+            continue
         tagged = nltk.pos_tag(tokens)
         entities = nltk.chunk.ne_chunk(tagged)
         for entity in entities:
@@ -94,7 +97,7 @@ def normalized_top_ten(c: Counter) -> list[tuple[str, float]]:
 
 def entity_tuples(source: str, start_date=None, end_date=None) -> list[tuple[str, float]]:
     headlines = headlines_by_source(source, start_date=start_date, end_date=end_date)
-    ner = ner_headlines(headlines, excluded_entities=[" ".join(source.split("-")).title(), "Listen0", "Comment", "x News CHARLESTON"])
+    ner = ner_headlines(headlines)
     ner = merge_first_and_last_names(ner)
     print("normalized", normalized_top_ten(ner))
     return normalized_top_ten(ner)

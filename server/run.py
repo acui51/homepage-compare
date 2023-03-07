@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request
 from flask_restful import Resource, Api
 from flask_cors import CORS
 from radar import entity_tuples
+from OpenSSL import SSL
 
 app = Flask(__name__)
 CORS(app)
@@ -21,4 +22,4 @@ def radar():
 
 
 if __name__ == "__main__":
-    app.run(port=8000, debug=True)
+    app.run(port=8000, debug=True, ssl_context="adhoc")
