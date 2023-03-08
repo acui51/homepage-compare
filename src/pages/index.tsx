@@ -142,7 +142,8 @@ export default function Home({ breakingNews }: Props) {
                   </div>
                   <div className="px-2 flex gap-4 w-full">
                     {newsSources.map(({ sourceId }) => {{
-                      return index === 0 && publicationPreviews?.[sourceId]?.length >= 3 && Date.parse(dateRange.upperBoundDate) - Date.parse(dateRange.lowerBoundDate) >= 86400000 && (
+                      const delta = Date.parse(dateRange.upperBoundDate) - Date.parse(dateRange.lowerBoundDate)
+                      return index === 0 && publicationPreviews?.[sourceId]?.length >= 3 && delta >= 86400000 && (
                         <NewsPreview radarData={publicationPreviews?.[sourceId]} />
                       )}
                     })}

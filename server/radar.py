@@ -116,6 +116,16 @@ def most_prominent(source: dict[str, Counter]) -> dict[str, Counter]:
     common_entities = set()
     common_counters = Counter()
     top_ten = Counter()
+    # grab a representative sample from each source
+    samples = {}
+    for s, counter in source.items():
+        samples[s] = counter.most_common(10)
+    # find the most common entities across all sources
+
+    for s, counter in source.items():
+        if s != "the-wall-street-journal":
+            common_counters.update(counter)
+
     for s, counter in source.items():
         if s != "the-wall-street-journal":
             top_ten.update(counter)
@@ -131,21 +141,16 @@ def most_prominent(source: dict[str, Counter]) -> dict[str, Counter]:
     out = {}
     for source_name, counter in source.items():
         out[source_name] = Counter()
-        for entity in common_entities:
-            out[source_name][entity] = counter[entity]
+        for key in top_ten_keys:
+            out[source_name][key] = counter[key]
         # If the number of common entities is less than 10, pad the list with entities from a combined Counter object.
         combined = Counter()
         for c in source.values():
             combined.update(c)
         if len(out[source_name]) < 10:
-            for entity, count in combined:
+            for entity in top_ten_keys:
                 if entity not in out[source_name]:
                     out[source_name][entity] = 0
-
-        # Filter on top_ten_keys.
-        for entity in out[source_name].copy():
-            if entity not in top_ten_keys:
-                del out[source_name][entity]
 
     return out
 
@@ -216,7 +221,5 @@ if __name__ == "__main__":
 
     mp = most_prominent({"the-washington-post": wapo_ne, "the-wall-street-journal": wsj_ne, "fox-news": fox_ne})
     print(mp)
-    for elem in mp.values():
-        print(normalized_top_ten(elem))
 
     # print(normalized_top_ten(fox_ne))
