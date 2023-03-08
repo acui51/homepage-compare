@@ -3,7 +3,7 @@ import { zeroISOString } from "@/utils/zeroISOString";
 import { useEffect, useState } from "react";
 import { supabase } from "supabase";
 
-const SIMILARITY_THRESHOLD = 0.3;
+const SIMILARITY_THRESHOLD = 0.45;
 
 export type HomepageNewsRow =
   Database["public"]["Tables"]["homepage-news"]["Row"];
