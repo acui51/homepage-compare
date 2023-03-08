@@ -14,7 +14,7 @@ const BreakingNews = ({ news, onClick }: Props) => {
 
   const scrolling = useSpring({
     from: { transform: "translate(60%,0)" },
-    to: { transform: "translate(-550%,0)" },
+    to: { transform: "translate(-300%,0)" },
     config: { duration: 120 * 1000 },
     reset: true,
     onRest: () => {
@@ -30,7 +30,6 @@ const BreakingNews = ({ news, onClick }: Props) => {
     try {
       setSplitNews(JSON.parse(news.choices[0].message.content));
     } catch (error: any) {
-      console.log("error", error);
       setError(error.message);
     }
   }, [news]);
