@@ -52,20 +52,8 @@ def merge_first_and_last_names(c: Counter) -> Counter:
 
 
 def headlines_by_source(source: str, start_date=None, end_date=None) -> list[str]:
-    query = supabase_client.table("top-headlines-news").select("title, source_id, content").filter("source_id", "eq", source)
-    if start_date is not None:
-        query = query.filter("publishedAt", "gt", start_date)
-    if end_date is not None:
-        query = query.filter("publishedAt", "lt", end_date)
-    response = query.execute()
-    entries = response.data
     # print(response.data[1]["content"], "con")
     result = []
-    for entry in entries:
-        a = entry["title"]
-        # if "content" in entry and entry["content"] is not None:
-        #     a += "\n??\n" + entry["content"]
-        result.append(a)
 
     if source == "the-wall-street-journal":
         source = "wsj"
