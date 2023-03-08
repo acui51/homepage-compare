@@ -88,17 +88,6 @@ export default function Home({ breakingNews }: Props) {
     <main className="flex flex-col items-center px-24 min-h-screen">
       <BreakingNews news={breakingNews} onClick={handleBreakingNewsClick} />
       <div className="max-w-7xl flex flex-col items-center py-10">
-        <h3 className="text-stone-700 w-2/5 font-bold text-center text-3xl mb-4">
-          Get the real story by tracing how coverage compares and evolves
-        </h3>
-        <Input.Search
-          size="large"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          onSearch={(value) => handleSearchFill(value, "search")}
-          placeholder="Search for anything within the date range"
-          className="w-3/5 mb-16"
-        />
         <DatePicker.RangePicker
           defaultValue={[
             dayjs(dateRange.lowerBoundDate),
@@ -107,7 +96,15 @@ export default function Home({ breakingNews }: Props) {
           showTime={{ format: "HH:mm" }}
           format="YYYY-MM-DD HH:mm"
           onOk={onOk}
-          className="w-84 self-start"
+          className="mb-6"
+        />
+        <Input.Search
+          size="large"
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          onSearch={(value) => handleSearchFill(value, "search")}
+          placeholder="Search for anything within the date range"
+          className="w-3/5 mb-12"
         />
         {loading && page === 0 ? (
           <div className="flex-col flex">
