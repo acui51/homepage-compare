@@ -127,7 +127,7 @@ export default function Home({ breakingNews }: Props) {
               })}
             </div>
             {data.length === 0 && <div>No results found...</div>}
-            {data.map((datum) => {
+            {data.map((datum, index_) => {
               return (
                 <Fragment key={datum.date}>
                   <div className="text-neutral-500 text-xl pb-2 sticky top-20 z-50 bg-white">
@@ -157,7 +157,7 @@ export default function Home({ breakingNews }: Props) {
                                 +new Date(b.created_at!)
                             )}
                             newsSource={sourceId}
-                            radarData={publicationPreviews?.[sourceId]}
+                            radarData={index_ === 0 && publicationPreviews?.[sourceId]}
                             onArticleClick={(value) =>
                               handleSearchFill(value, "similarity")
                             }

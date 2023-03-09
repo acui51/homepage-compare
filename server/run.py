@@ -2,6 +2,8 @@ from datetime import datetime, date
 from flask import Flask, jsonify, request
 from flask_restful import Resource, Api
 from radar import entity_tuples
+from frequency import interpret_source, generate_standard
+from radar import headlines_by_source
 
 app = Flask(__name__)
 api = Api(app)
@@ -11,11 +13,12 @@ api = Api(app)
 def radar():
     start_date = request.args.get("from")
     end_date = request.args.get("to")
-    wsj = [{"name": entity, "prominence": proportion} for entity, proportion in entity_tuples("the-wall-street-journal", start_date=start_date, end_date=end_date)]
-    wapo = [{"name": entity, "prominence": proportion} for entity, proportion in entity_tuples("the-washington-post", start_date=start_date, end_date=end_date)]
-    fox = [{"name": entity, "prominence": proportion} for entity, proportion in entity_tuples("fox-news", start_date=start_date, end_date=end_date)]
+    standard_counter = generate_standard(["wsj", "the-washington-post", "fox-news"], start_date=start_date, end_date=end_date)
 
-    return jsonify({"the-wall-street-journal": wsj, "the-washington-post": wapo, "fox-news": fox})
+    wsj = interpret_source("wsj", standard_counter, start_date=start_date, end_date=end_date)
+    wp = interpret_source("the-washington-post", standard_counter, start_date=start_date, end_date=end_date)
+    fox = interpret_source("fox-news", standard_counter)
+    return jsonify({"wsj": wsj, "the-washington-post": wp, "fox-news": fox})
 
 
 if __name__ == "__main__":

@@ -121,7 +121,7 @@ const NewsList = ({
 }: NewsListProps) => {
   return (
     <Fragment>
-      {radarData?.length >= 10 && <NewsPreview radarData={radarData} />}
+      {radarData?.length >= 3 && <NewsPreview radarData={radarData} />}
       {newsData ? (
         <div className="relative mb-12 cursor-pointer">
           <NewsStack

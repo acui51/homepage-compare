@@ -49,15 +49,20 @@ def merge_first_and_last_names(c: Counter) -> Counter:
 
 
 def headlines_by_source(source: str, start_date=None, end_date=None) -> list[str]:
-    query = supabase_client.table("top-headlines-news").select("title, source_id").filter("source_id", "eq", source)
-    if start_date is not None:
-        query = query.filter("publishedAt", "gt", start_date)
-    if end_date is not None:
-        query = query.filter("publishedAt", "lt", end_date)
-    response = query.execute()
-    entries = response.data
+    result = []
+    for i in range(1, 4):
+        query = supabase_client.table("homepage-news").select("title, source_id").filter("source_id", "eq", source).range((i - 1)*1000, i*1000)
+        if start_date is not None:
+            query = query.filter("created_at", "gt", start_date)
+        if end_date is not None:
+            query = query.filter("created_at", "lt", end_date)
+        response = query.execute()
+        entries = response.data
+        if len(entries) == 0:
+            break
+        result.extend(entries)
 
-    return [entry["title"] for entry in entries]
+    return [entry["title"] for entry in result if "title" in entry and entry["title"]]
 
 
 def normalized_top_ten(c: Counter) -> list[tuple[str, float]]:
