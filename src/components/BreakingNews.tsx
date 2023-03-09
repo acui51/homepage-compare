@@ -30,7 +30,6 @@ const BreakingNews = ({ news, onClick }: Props) => {
     try {
       setSplitNews(JSON.parse(news.choices[0].message.content));
     } catch (error: any) {
-      console.log("error", error);
       setError(error.message);
     }
   }, [news]);
