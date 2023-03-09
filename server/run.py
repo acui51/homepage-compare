@@ -15,8 +15,8 @@ def radar():
     end_date = request.args.get("to")
     standard_counter = generate_standard(["wsj", "the-washington-post", "fox-news"], start_date=start_date, end_date=end_date)
 
-    wsj = interpret_source("wsj", standard_counter)
-    wp = interpret_source("the-washington-post", standard_counter)
+    wsj = interpret_source("wsj", standard_counter, start_date=start_date, end_date=end_date)
+    wp = interpret_source("the-washington-post", standard_counter, start_date=start_date, end_date=end_date)
     fox = interpret_source("fox-news", standard_counter)
     return jsonify({"wsj": wsj, "the-washington-post": wp, "fox-news": fox})
 

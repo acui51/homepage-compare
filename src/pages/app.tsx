@@ -59,8 +59,6 @@ export default function Home({ breakingNews }: Props) {
     upperBoundDate: dateRange.upperBoundDate,
   });
 
-  console.log("publicationPreviews", publicationPreviews);
-
   useIntersectionObserver({
     observedElement: lastElement,
     callback: (entries: IntersectionObserverEntry[]) => {
