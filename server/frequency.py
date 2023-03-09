@@ -21,9 +21,7 @@ def generate_standard(sources: list[str], start_date=None, end_date=None) -> Cou
     c = []
     for source in sources:
         headlines = headlines_by_source(source, start_date=start_date, end_date=end_date)
-        # print("generate_standard", source, headlines)
         ner = ner_headlines(headlines)
-        print("generate_standard", source, ner)
         c.append(normalize_counter(ner))
 
     return common_counter(reduce(lambda a, b: a & b, c), 10)
@@ -31,9 +29,7 @@ def generate_standard(sources: list[str], start_date=None, end_date=None) -> Cou
 
 def interpret_source(source: str, world: Counter, start_date=None, end_date=None) -> list[dict[str, float]]:
     headlines = headlines_by_source(source, start_date=start_date, end_date=end_date)
-    print(headlines)
     ner = ner_headlines(headlines)
-    print(ner)
     score = normalize_counter(gauge_score(normalize_counter(ner), world))
 
     return [{"name": entity, "prominence": proportion} for entity, proportion in score.items()]

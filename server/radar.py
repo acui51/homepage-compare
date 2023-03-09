@@ -58,7 +58,6 @@ def headlines_by_source(source: str, start_date=None, end_date=None) -> list[str
             query = query.filter("created_at", "lt", end_date)
         response = query.execute()
         entries = response.data
-        print("entries", entries)
         result.extend(entries)
 
     return [entry["title"] for entry in result if "title" in entry and entry["title"]]
