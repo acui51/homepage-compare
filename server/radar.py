@@ -50,7 +50,7 @@ def merge_first_and_last_names(c: Counter) -> Counter:
 
 def headlines_by_source(source: str, start_date=None, end_date=None) -> list[str]:
     result = []
-    for i in range(1, 10):
+    for i in range(1, 4):
         query = supabase_client.table("homepage-news").select("title, source_id").filter("source_id", "eq", source).range((i - 1)*1000, i*1000)
         if start_date is not None:
             query = query.filter("created_at", "gt", start_date)

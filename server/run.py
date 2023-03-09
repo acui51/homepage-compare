@@ -18,7 +18,7 @@ def radar():
     wsj = interpret_source("wsj", standard_counter)
     wp = interpret_source("the-washington-post", standard_counter)
     fox = interpret_source("fox-news", standard_counter)
-    return jsonify({"the-wall-street-journal": wsj, "the-washington-post": wp, "fox-news": fox})
+    return jsonify({"wsj": wsj, "the-washington-post": wp, "fox-news": fox})
 
 
 if __name__ == "__main__":
