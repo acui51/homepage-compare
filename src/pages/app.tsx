@@ -104,7 +104,7 @@ export default function Home({ breakingNews }: Props) {
           onChange={(e) => setSearchValue(e.target.value)}
           onSearch={(value) => handleSearchFill(value, "search")}
           placeholder="Search for anything within the date range"
-          className="w-3/5 mb-12"
+          className="w-1/2 mb-12"
         />
         {loading && page === 0 ? (
           <div className="flex-col flex">
@@ -132,7 +132,7 @@ export default function Home({ breakingNews }: Props) {
                 <Fragment key={datum.date}>
                   <div className="text-neutral-500 text-xl pb-2 sticky top-20 z-50 bg-white">
                     <Divider>
-                      <span className="text-neutral-500 text-xl font-medium">
+                      <span className="text-[#2E3646] text-xl font-medium">
                         {formatDateString(datum.date)} EST
                       </span>
                     </Divider>
