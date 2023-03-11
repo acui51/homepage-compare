@@ -70,18 +70,14 @@ export default function NewsPreview({ margin = defaultMargin, fullMulti }: NewsP
   const radius = Math.min(xMax, yMax) / 2;
   const positionScaleFactor = 1.1;
   const radialScale = (d: number) => d * Math.PI / 180;
-  const verticalScale = (d: number) => d * radius * Math.max(...Object.values(fullMulti).map((d) => 1.25*positionScaleFactor*d.length)) / nLevels;
+  const verticalScales = Object.values(fullMulti).map((d) => {
+    return (n: number) => n * radius / Math.max(...d.map(y))
+  })
   const maxLength = _.maxBy(Object.values(fullMulti), (d) => d.length)?.length ?? 0;
   const webs = genAngles(maxLength)
   const vertices = genPoints(maxLength, radius);
   const labelPositions = genPoints(maxLength, (positionScaleFactor + 0.05) * radius, positionScaleFactor);
-  const nodePositions = Object.values(fullMulti).map((d) => genPolygonPoints(d, (d) => verticalScale(d) ?? 0, y));
-  function normalizePositions(positions: { points: { x: number, y: number }[], pointString: string }) {
-    const { x, y } = positions.points[0];
-    const normalizedPoints = positions.points.map((d) => ({ x: d.x - x, y: d.y - y }));
-    return { points: normalizedPoints, pointString: normalizedPoints.map((d) => `${d.x},${d.y}`).join(' ') };
-  }
-  const normalizedNodePositions = nodePositions.map((d) => normalizePositions(d));
+  const nodePositions = Object.values(fullMulti).map((d, i) => genPolygonPoints(d, (d) => verticalScales[i](d) ?? 0, y));
   const origin = new Point({ x: 0, y: 0 });
   const labels = Object.values(fullMulti)[0].map((d) => d.name);
 
@@ -165,8 +161,8 @@ export default function NewsPreview({ margin = defaultMargin, fullMulti }: NewsP
               {[...new Array(radarData.length)].map((_, i) => (
                 <Line key={`radar-line-${i}`} from={origin} to={vertices[i]} stroke={silver} />
               ))}
-              <polygon points={normalizedNodePositions[i].pointString} fill={polygonColors[sourceId].fill} fillOpacity={0.3} stroke={polygonColors[sourceId].stroke} strokeWidth={1} />
-              {normalizedNodePositions[i].points.map((point, i) => (
+              <polygon points={nodePositions[i].pointString} fill={polygonColors[sourceId].fill} fillOpacity={0.3} stroke={polygonColors[sourceId].stroke} strokeWidth={1} />
+              {nodePositions[i].points.map((point, i) => (
                 <React.Fragment key={`radar-point-${i}`}>
                   <circle key={`radar-point-${i}`} cx={point.x} cy={point.y} r={4} fill={polygonColors[sourceId].fill} />
                 </React.Fragment>
