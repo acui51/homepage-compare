@@ -50,8 +50,7 @@ def merge_first_and_last_names(c: Counter) -> Counter:
 
 def headlines_by_source(source: str, start_date=None, end_date=None) -> list[str]:
     result = []
-    i = 0
-    while True:
+    for i in range(10):
         pagination = get_pagination(i)
         query = supabase_client.table("homepage-news").select("title, source_id").filter("source_id", "eq", source).range(*pagination)
         if start_date is not None:
@@ -63,7 +62,6 @@ def headlines_by_source(source: str, start_date=None, end_date=None) -> list[str
         if len(entries) == 0:
             break
         result.extend(entries)
-        i += 1
 
     return [entry["title"] for entry in result if "title" in entry and entry["title"]]
 

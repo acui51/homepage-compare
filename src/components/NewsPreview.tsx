@@ -11,7 +11,7 @@ const silver = '#d9d9d9';
 const background = '#FFFFFF';
 const defaultMargin = { top: 40, left: 80, right: 80, bottom: 80 };
 
-type NewsPreviewProps = {
+export type NewsPreviewProps = {
     /**
      * data for rendering polygon in mini Radar
     **/
