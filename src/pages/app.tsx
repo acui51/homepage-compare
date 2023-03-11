@@ -96,7 +96,7 @@ export default function Home({ breakingNews }: Props) {
   const Previews = () => {
     return newsSources && (
       <div>
-              <NewsPreview radarData={publicationPreviews?.["wsj"]} multi={Object.values(publicationPreviews)} fullMulti={publicationPreviews} />
+              <NewsPreview radarData={publicationPreviews?.["wsj"]} fullMulti={publicationPreviews} />
 
       </div>
     );
@@ -181,8 +181,6 @@ export default function Home({ breakingNews }: Props) {
                                 +new Date(b.created_at!)
                             )}
                             newsSource={sourceId}
-                            radarData={index_ === -1 && publicationPreviews?.[sourceId]}
-                            multi={index_ === -1 && Object.values(publicationPreviews)}
                             onArticleClick={(value) =>
                               handleSearchFill(value, "similarity")
                             }
