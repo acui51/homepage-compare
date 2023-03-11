@@ -25,7 +25,7 @@ export type NewsPreviewProps = {
     multi: RadarProminence[][]
 }
 
-export default function NewsPreview({ radarData, margin = defaultMargin }: NewsPreviewProps) {
+export default function NewsPreview({ radarData, margin = defaultMargin, multi }: NewsPreviewProps) {
   const nLevels = 5
   const width = 400
   const height = 400
@@ -42,6 +42,11 @@ export default function NewsPreview({ radarData, margin = defaultMargin }: NewsP
   const labelPositions = genPoints(radarData.length, (positionScaleFactor + 0.05) * radius, positionScaleFactor);
   const nodePositions = genPolygonPoints(radarData, (d) => verticalScale(d) ?? 0, y);
   const origin = new Point({ x: 0, y: 0 });
+
+  const multiWebs = multi.map((radarData) => genAngles(radarData.length));
+  const multiVertices = multi.map((radarData) => genPoints(radarData.length, radius));
+  const multiLabelPositions = multi.map((radarData) => genPoints(radarData.length, (positionScaleFactor + 0.05) * radius, positionScaleFactor));
+  const multiNodePositions = multi.map((radarData) => genPolygonPoints(multi ? radarData : radarData, (d) => verticalScale(d) ?? 0, y));
   
   return (
     <div className='w-full flex justify-center items-center'>
@@ -88,6 +93,37 @@ export default function NewsPreview({ radarData, margin = defaultMargin }: NewsP
           {nodePositions.points.map((point, i) => (
             <React.Fragment key={`radar-point-${i}`}>
               <circle key={`radar-point-${i}`} cx={point.x} cy={point.y} r={4} fill={belizeHole} />
+            </React.Fragment>
+          ))}
+          {multi?.map((radarData, i) => (
+            <React.Fragment key={`radar-${i}`}>
+              {[...new Array(nLevels)].map((_, i) => (
+                <LineRadial
+                  key={`web-${i}`} 
+                  data={multiWebs[i]}
+                  angle={(d) => radialScale(d.angle) ?? 0}
+                  radius={((i + 1) * radius) / nLevels}
+                  fill="none"
+                  stroke={silver}
+                  strokeWidth={2}
+                  strokeOpacity={0.8}
+                  strokeLinecap="round"
+                />
+              ))}
+              {[...new Array(radarData.length)].map((_, i) => (
+                <Line key={`radar-line-${i}`} from={origin} to={multiVertices[i]} stroke={silver} />
+              ))}
+              <polygon points={multiNodePositions[i].pointString} fill={peterRiver} fillOpacity={0.3} stroke={peterRiver} strokeWidth={1} />
+              {multiLabelPositions[i].map((point, i) => (
+                <React.Fragment key={`radar-point-${i}`}>
+                  <text key={`radar-point-text-${i}`} x={point.x} y={point.y} dx={0} dy={0} fontSize={12} fill={belizeHole} textAnchor="middle">{radarData[i].name}</text>
+                </React.Fragment>
+              ))}
+              {multiNodePositions[i].points.map((point, i) => (
+                <React.Fragment key={`radar-point-${i}`}>
+                  <circle key={`radar-point-${i}`} cx={point.x} cy={point.y} r={4} fill={belizeHole} />
+                </React.Fragment>
+              ))}
             </React.Fragment>
           ))}
         </Group>

@@ -97,9 +97,9 @@ export default function Home({ breakingNews }: Props) {
     return newsSources && (
       <div>
         {newsSources.map(({ sourceId, sourceName }) => {
-          return (
+          return publicationPreviews && (
             <div key={sourceId}>
-              <NewsPreview radarData={publicationPreviews?.[sourceId]} multi={publicationPreviews} />
+              <NewsPreview radarData={publicationPreviews?.[sourceId]} multi={Object.values(publicationPreviews)} />
             </div>
           );
         })}
