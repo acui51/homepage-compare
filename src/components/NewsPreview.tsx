@@ -7,6 +7,24 @@ import { genAngles, genPoints, genPolygonPoints, y } from '../utils/radar';
 
 const peterRiver = '#3498db';
 const belizeHole = '#2980b9';
+const emerald = "#2ecc71"
+const nephritis = "#27ae60"
+const carrot = "#e67e22"
+const pumpkin = "#d35400"
+const polygonColors = {
+  "wsj": {
+    stroke: nephritis,
+    fill: emerald
+  },
+  "the-washington-post": {
+    stroke: belizeHole,
+    fill: peterRiver
+  },
+  "fox-news": {
+    stroke: pumpkin,
+    fill: carrot
+  }
+}
 const silver = '#d9d9d9';
 const background = '#FFFFFF';
 const defaultMargin = { top: 40, left: 80, right: 80, bottom: 80 };
@@ -127,10 +145,10 @@ export default function NewsPreview({ radarData, margin = defaultMargin, multi, 
               {[...new Array(radarData.length)].map((_, i) => (
                 <Line key={`radar-line-${i}`} from={origin} to={multiVertices[i]} stroke={silver} />
               ))}
-              <polygon points={multiNodePositions[i].pointString} fill={peterRiver} fillOpacity={0.3} stroke={peterRiver} strokeWidth={1} />
+              <polygon points={multiNodePositions[i].pointString} fill={polygonColors[sourceId].fill} fillOpacity={0.3} stroke={polygonColors[sourceId].stroke} strokeWidth={1} />
               {multiNodePositions[i].points.map((point, i) => (
                 <React.Fragment key={`radar-point-${i}`}>
-                  <circle key={`radar-point-${i}`} cx={point.x} cy={point.y} r={4} fill={belizeHole} />
+                  <circle key={`radar-point-${i}`} cx={point.x} cy={point.y} r={4} fill={polygonColors[sourceId].fill} />
                 </React.Fragment>
               ))}
 
