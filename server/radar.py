@@ -2,7 +2,7 @@ import nltk
 from collections import Counter
 from nltk.tokenize import word_tokenize
 from supabase import create_client, Client
-from utils import load_credentials
+from utils import load_credentials, get_pagination
 
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
@@ -50,8 +50,10 @@ def merge_first_and_last_names(c: Counter) -> Counter:
 
 def headlines_by_source(source: str, start_date=None, end_date=None) -> list[str]:
     result = []
-    for i in range(1, 4):
-        query = supabase_client.table("homepage-news").select("title, source_id").filter("source_id", "eq", source).range((i - 1)*1000, i*1000)
+    i = 0
+    while True:
+        pagination = get_pagination(i)
+        query = supabase_client.table("homepage-news").select("title, source_id").filter("source_id", "eq", source).range(*pagination)
         if start_date is not None:
             query = query.filter("created_at", "gt", start_date)
         if end_date is not None:
@@ -61,6 +63,7 @@ def headlines_by_source(source: str, start_date=None, end_date=None) -> list[str
         if len(entries) == 0:
             break
         result.extend(entries)
+        i += 1
 
     return [entry["title"] for entry in result if "title" in entry and entry["title"]]
 

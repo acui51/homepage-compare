@@ -11,3 +11,15 @@ def load_credentials():
             d[key] = value.strip()
 
         return d["NEXT_PUBLIC_SUPABASE_URL"], d["NEXT_PUBLIC_SUPABASE_ANON_KEY"]
+
+
+def get_pagination(page: int, size=180):
+    if size:
+        limit = size
+    else:
+        limit = 3
+
+    source = page * limit
+    destination = source + size - 1
+
+    return source, destination

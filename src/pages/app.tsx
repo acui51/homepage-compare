@@ -1,6 +1,6 @@
 import { useHomepageNews, usePublicationPreviews } from "@/hooks";
-import { Fragment, useCallback, useState } from "react";
-import { Input, Spin, DatePicker, Divider } from "antd";
+import { Fragment, useCallback, useMemo, useState } from "react";
+import { Input, Spin, DatePicker, Divider, Popover, Button } from "antd";
 import type { RangePickerProps } from "antd/es/date-picker";
 import { NewsList } from "@/components";
 import dayjs from "dayjs";
@@ -84,6 +84,46 @@ export default function Home({ breakingNews }: Props) {
     [handleSearchFill]
   );
 
+  const [showArrow, setShowArrow] = useState(true);
+  const [arrowAtCenter, setArrowAtCenter] = useState(false);
+
+  const mergedArrow = useMemo(() => {
+    if (arrowAtCenter) return { pointAtCenter: true };
+    return showArrow;
+  }, [showArrow, arrowAtCenter]);
+
+  const Previews = (newsSources) => (
+    <div className="px-2 flex gap-4 w-full">
+    {newsSources.map(({ sourceId }, index) => {
+      return (
+        <div
+          className="w-1/3"
+          key={index}
+          // @ts-ignore
+          ref={
+            index === newsSources.length - 1
+              ? setLastElement
+              : undefined
+          }
+        >
+          <NewsList
+            newsData={datum.articles[sourceId]?.sort(
+              (a: HomepageNewsRow, b: HomepageNewsRow) =>
+                +new Date(a.created_at!) -
+                +new Date(b.created_at!)
+            )}
+            newsSource={sourceId}
+            radarData={index_ === 0 && publicationPreviews?.[sourceId]}
+            onArticleClick={(value) =>
+              handleSearchFill(value, "similarity")
+            }
+          />
+        </div>
+      );
+    })}
+  </div>
+  )
+
   return (
     <main className="flex flex-col items-center px-24 min-h-screen">
       <BreakingNews news={breakingNews} onClick={handleBreakingNewsClick} />
@@ -134,6 +174,12 @@ export default function Home({ breakingNews }: Props) {
                     <Divider>
                       <span className="text-[#2E3646] text-xl font-medium">
                         {formatDateString(datum.date)} EST
+                      
+                        {index_ === 0 && <Popover placement="bottomRight" title={"hello"} content={<p>hello</p>} arrow={mergedArrow}>
+                        <Button className="ml-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                        </svg></Button>
+                      </Popover>}
                       </span>
                     </Divider>
                   </div>
