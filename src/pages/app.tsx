@@ -96,13 +96,8 @@ export default function Home({ breakingNews }: Props) {
   const Previews = () => {
     return newsSources && (
       <div>
-        {newsSources.map(({ sourceId, sourceName }) => {
-          return publicationPreviews && (
-            <div key={sourceId}>
-              <NewsPreview radarData={publicationPreviews?.[sourceId]} multi={Object.values(publicationPreviews)} />
-            </div>
-          );
-        })}
+              <NewsPreview radarData={publicationPreviews?.["wsj"]} multi={Object.values(publicationPreviews)} fullMulti={publicationPreviews} />
+
       </div>
     );
   }
@@ -167,7 +162,6 @@ export default function Home({ breakingNews }: Props) {
                     </Divider>
                   </div>
                   <div className="px-2 flex gap-4 w-full">
-                   {index_ === 0 && <Previews />}
                     {newsSources.map(({ sourceId }, index) => {
                       return (
                         <div
@@ -188,6 +182,7 @@ export default function Home({ breakingNews }: Props) {
                             )}
                             newsSource={sourceId}
                             radarData={index_ === -1 && publicationPreviews?.[sourceId]}
+                            multi={index_ === -1 && Object.values(publicationPreviews)}
                             onArticleClick={(value) =>
                               handleSearchFill(value, "similarity")
                             }
