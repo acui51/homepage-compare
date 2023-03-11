@@ -94,12 +94,17 @@ export default function Home({ breakingNews }: Props) {
   }, [showArrow, arrowAtCenter]);
 
   const Previews = () => {
-    return (
-    <div>
-    <div className="px-2 flex gap-4 w-full">
-      <OverlayNewsPreview radarDataList={publicationPreviews && Object.values(publicationPreviews)} />
-      
-    </div><p>Some text goes here.</p></div>)
+    return newsSources && (
+      <div>
+        {newsSources.map(({ sourceId, sourceName }) => {
+          return (
+            <div key={sourceId}>
+              <NewsPreview radarData={publicationPreviews?.[sourceId]} multi={publicationPreviews} />
+            </div>
+          );
+        })}
+      </div>
+    );
   }
 
   return (
@@ -162,7 +167,7 @@ export default function Home({ breakingNews }: Props) {
                     </Divider>
                   </div>
                   <div className="px-2 flex gap-4 w-full">
-                    <Previews />
+                   {index_ === 0 && <Previews />}
                     {newsSources.map(({ sourceId }, index) => {
                       return (
                         <div

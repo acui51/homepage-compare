@@ -22,6 +22,7 @@ export type NewsPreviewProps = {
      * default: { top: 40, left: 80, right: 80, bottom: 80 }
      * */
     margin?: { top: number; right: number; bottom: number; left: number };
+    multi: RadarProminence[][]
 }
 
 export default function NewsPreview({ radarData, margin = defaultMargin }: NewsPreviewProps) {
@@ -46,6 +47,7 @@ export default function NewsPreview({ radarData, margin = defaultMargin }: NewsP
     <div className='w-full flex justify-center items-center'>
       <svg width={width} height={height}>
         <rect fill={background} width={width} height={height} rx={14} />
+        {/* stack two copies of the radar on top of each other to create a subtle shadow effect */}
         <Group top={height / 2 - margin.top} left={width / 2}>
           {[...new Array(nLevels)].map((_, i) => (
             <LineRadial
@@ -64,6 +66,20 @@ export default function NewsPreview({ radarData, margin = defaultMargin }: NewsP
             <Line key={`radar-line-${i}`} from={origin} to={vertices[i]} stroke={silver} />
           ))}
           <polygon points={nodePositions.pointString} fill={peterRiver} fillOpacity={0.3} stroke={peterRiver} strokeWidth={1} />
+          {labelPositions.map((point, i) => (
+            <React.Fragment key={`radar-point-${i}`}>
+              <text key={`radar-point-text-${i}`} x={point.x} y={point.y} dx={0} dy={0} fontSize={12} fill={belizeHole} textAnchor="middle">{radarData[i].name}</text>
+            </React.Fragment>
+          ))}
+          {nodePositions.points.map((point, i) => (
+            <React.Fragment key={`radar-point-${i}`}>
+              <circle key={`radar-point-${i}`} cx={point.x} cy={point.y} r={4} fill={belizeHole} />
+            </React.Fragment>
+          ))}
+          {[...new Array(radarData.length)].map((_, i) => (
+            <Line key={`radar-line-${i}`} from={origin} to={vertices[i]} stroke={silver} />
+          ))}
+          <polygon points={nodePositions.pointString} fill={"red"} fillOpacity={0.3} stroke={peterRiver} strokeWidth={1} />
           {labelPositions.map((point, i) => (
             <React.Fragment key={`radar-point-${i}`}>
               <text key={`radar-point-text-${i}`} x={point.x} y={point.y} dx={0} dy={0} fontSize={12} fill={belizeHole} textAnchor="middle">{radarData[i].name}</text>
