@@ -77,12 +77,19 @@ export default function NewsPreview({ margin = defaultMargin, fullMulti }: NewsP
   const webs = genAngles(maxLength)
   const vertices = genPoints(maxLength, radius);
   const labelPositions = genPoints(maxLength, (positionScaleFactor + 0.05) * radius, positionScaleFactor);
-  const nodePositions = Object.values(fullMulti).map((d, i) => genPolygonPoints(d, (d) => verticalScales[i](d) ?? 0, y));
+  const nodePositions = Object.values(fullMulti).map((d, i) => {
+    const scaleLength = verticalScales[i]
+    return genPolygonPoints(d, (d) => scaleLength(d) ?? 0, y)
+  });
   const origin = new Point({ x: 0, y: 0 });
   const labels = Object.values(fullMulti)[0].map((d) => d.name);
 
+  function termOfMaxProminence(d: RadarProminence[]) {
+    return d.reduce((max, p) => (p.prominence > max.prominence ? p : max), d[0]);
+  }
+
   return (
-    <div className='w-full flex justify-center items-center'>
+    <div className='w-full flex flex-col justify-center items-center'>
       <svg width={width} height={height}>
         <rect fill={background} width={width} height={height} rx={14} />
         {/* stack two copies of the radar on top of each other to create a subtle shadow effect */}
@@ -169,11 +176,11 @@ export default function NewsPreview({ margin = defaultMargin, fullMulti }: NewsP
               ))}
             </React.Fragment>
           ))}
-
-        
-
+          
         </Group>
+        
       </svg>
+      <p>hello</p>
     </div>
   )
 }
