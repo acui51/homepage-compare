@@ -92,16 +92,16 @@ export default function NewsPreview({ fullMulti, margin = defaultMargin, colors 
   const origin = new Point({ x: 0, y: 0 });
   const labels = Object.values(fullMulti)[0].map((d) => d.name);
 
-  function termOfMaxProminence(d: RadarProminence[]) {
-    return d.reduce((max, p) => (p.prominence > max.prominence ? p : max), d[0]);
+  function termOfMaxProminence(d: RadarProminence[][]) {
+    return _.maxBy(_.flatten(d), (d) => d.prominence)?.name ?? ""
   }
-  const legendColors = Object.entries(fullMulti).map(([key, value]) => {
-    const term = termOfMaxProminence(value);
-    return {
-      label: term.name,
-      color: colors[key].fill
-    }
-  })
+  // const legendColors = Object.entries(fullMulti).map(([key, value]) => {
+  //   const term = termOfMaxProminence(value);
+  //   return {
+  //     label: term.name,
+  //     color: colors[key].fill
+  //   }
+  // })
   const legendItems = [
     {
       label: "The Washington Post",
@@ -210,7 +210,7 @@ export default function NewsPreview({ fullMulti, margin = defaultMargin, colors 
         </Group>
         
       </svg>
-      <Legend items={legendItems} winningTerm={termOfMaxProminence(fullMulti["the-washington-post"]).name} />
+      <Legend items={legendItems} winningTerm={termOfMaxProminence(Object.values(fullMulti))} />
     </div>
   )
 }

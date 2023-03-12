@@ -24,12 +24,12 @@ export default function Legend({ items, winningTerm }: LegendProps) {
                 className="w-4 h-4 rounded-full"
                 style={{ backgroundColor: item.color.fill }}
               />
-              <div className="ml-2">{item.label}</div>
+              <div className="ml-2"><p className='text-xs'>{item.label}</p></div>
             </div>
           ))}
         </div>
-        <div className="flex flex-col flex-1/2">
-          <p className='max-w-sm'>In publishing and graphic design, {winningTerm} Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content.</p>
+        <div className="flex flex-col max-w-xs">
+          <p className='flex max-w-x text-xs'>“{winningTerm}” is the most common term found in the coverage from the selected date range.</p>
         </div>
       </div>
     </div>
