@@ -5,6 +5,7 @@ import { Line, LineRadial } from '@visx/shape';
 import type { RadarProminence } from '../utils/radar';
 import { genAngles, genPoints, genPolygonPoints, y } from '../utils/radar';
 import _ from 'lodash';
+import Legend from './Legend';
 
 const peterRiver = '#3498db';
 const belizeHole = '#2980b9';
@@ -12,7 +13,11 @@ const emerald = "#2ecc71"
 const nephritis = "#27ae60"
 const carrot = "#e67e22"
 const pumpkin = "#d35400"
-const polygonColors = {
+export type PolygonColor = {
+  stroke: string;
+  fill: string;
+}
+const defaultColors = {
   "wsj": {
     stroke: nephritis,
     fill: emerald
@@ -59,9 +64,12 @@ export type NewsPreviewProps = {
     fullMulti: {
       [key: string]: RadarProminence[]
     }
+    colors: {
+      [key: string]: PolygonColor
+    }
 }
 
-export default function NewsPreview({ margin = defaultMargin, fullMulti }: NewsPreviewProps) {
+export default function NewsPreview({ fullMulti, margin = defaultMargin, colors = defaultColors }: NewsPreviewProps) {
   const nLevels = 5
   const width = 400
   const height = 400
@@ -87,6 +95,28 @@ export default function NewsPreview({ margin = defaultMargin, fullMulti }: NewsP
   function termOfMaxProminence(d: RadarProminence[]) {
     return d.reduce((max, p) => (p.prominence > max.prominence ? p : max), d[0]);
   }
+  const legendColors = Object.entries(fullMulti).map(([key, value]) => {
+    const term = termOfMaxProminence(value);
+    return {
+      label: term.name,
+      color: colors[key].fill
+    }
+  })
+  const legendItems = [
+    {
+      label: "The Washington Post",
+      color: colors["the-washington-post"]
+    },
+    {
+      label: "The Wall Street Journal",
+      color: colors["wsj"]
+    },
+
+    {
+      label: "Fox News",
+      color: colors["fox-news"]
+    }
+  ]
 
   return (
     <div className='w-full flex flex-col justify-center items-center'>
@@ -168,19 +198,19 @@ export default function NewsPreview({ margin = defaultMargin, fullMulti }: NewsP
               {[...new Array(radarData.length)].map((_, i) => (
                 <Line key={`radar-line-${i}`} from={origin} to={vertices[i]} stroke={silver} />
               ))}
-              <polygon points={nodePositions[i].pointString} fill={polygonColors[sourceId].fill} fillOpacity={0.3} stroke={polygonColors[sourceId].stroke} strokeWidth={1} />
+              <polygon points={nodePositions[i].pointString} fill={colors[sourceId].fill} fillOpacity={0.3} stroke={colors[sourceId].stroke} strokeWidth={1} />
               {nodePositions[i].points.map((point, i) => (
                 <React.Fragment key={`radar-point-${i}`}>
-                  <circle key={`radar-point-${i}`} cx={point.x} cy={point.y} r={4} fill={polygonColors[sourceId].fill} />
+                  <circle key={`radar-point-${i}`} cx={point.x} cy={point.y} r={4} fill={colors[sourceId].fill} />
                 </React.Fragment>
               ))}
+              
             </React.Fragment>
           ))}
-          
         </Group>
         
       </svg>
-      <p>hello</p>
+      <Legend items={legendItems}/>
     </div>
   )
 }
