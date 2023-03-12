@@ -88,7 +88,7 @@ export default function Home({ breakingNews }: Props) {
   const [arrowAtCenter, setArrowAtCenter] = useState(false);
 
   const mergedArrow = useMemo(() => {
-    if (arrowAtCenter) return { pointAtCenter: true };
+    if (arrowAtCenter) return {  arrowPointAtCenter: true };
     return showArrow;
   }, [showArrow, arrowAtCenter]);
 
