@@ -103,11 +103,6 @@ type NewsListProps = {
   newsSource: string;
 
   /**
-   * data for radar preview
-   */
-  previews: any
-
-  /**
    * setter function for updating the search value
    */
   onArticleClick: (value: string) => void;
@@ -116,12 +111,10 @@ type NewsListProps = {
 const NewsList = ({
   newsData,
   newsSource,
-  previews,
   onArticleClick,
 }: NewsListProps) => {
   return (
     <Fragment>
-      {previews && <NewsPreview previews={previews} />}
       {newsData ? (
         <div className="relative mb-12 cursor-pointer">
           <NewsStack
