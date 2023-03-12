@@ -9,11 +9,10 @@ export type LegendProps = {
         label: string;
         color: PolygonColor;
     }[];
-    winningTerm: string;
+    winningTerm?: string;
 };
 
 export default function Legend({ items, winningTerm }: LegendProps) {
-  // two column layout with tailwind
   return (
     <div className="flex flex-col max-w-md" style={{marginTop: -80}}>
       <div className="flex flex-col">
@@ -30,9 +29,11 @@ export default function Legend({ items, winningTerm }: LegendProps) {
             ))}
           </div>
         </div>
-        <div className="flex flex-row justify-start px-2 py-2">
-          <p className='flex max-w-x text-sm text-left'>“{winningTerm}” is the most common term found in the coverage from the selected date range.</p>
-        </div>
+        {winningTerm && (
+          <div className="flex flex-row justify-start px-2 py-2">
+            <p className='flex max-w-x text-sm text-left'>“{winningTerm}” is the most common term found in the coverage from the selected date range.</p>
+          </div>
+        )}
       </div>
     </div>
   );

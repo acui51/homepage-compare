@@ -105,27 +105,23 @@ type NewsListProps = {
   /**
    * data for radar preview
    */
-  radarData: any;
+  previews: any
 
   /**
    * setter function for updating the search value
    */
   onArticleClick: (value: string) => void;
-  multi: any
-  fullMulti: any
 };
 
 const NewsList = ({
   newsData,
   newsSource,
-  radarData,
-  multi,
-  fullMulti,
+  previews,
   onArticleClick,
 }: NewsListProps) => {
   return (
     <Fragment>
-      {radarData?.length >= 3 && <NewsPreview radarData={radarData} multi={multi} fullMulti={fullMulti} />}
+      {previews && <NewsPreview previews={previews} />}
       {newsData ? (
         <div className="relative mb-12 cursor-pointer">
           <NewsStack

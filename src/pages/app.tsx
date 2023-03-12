@@ -96,7 +96,7 @@ export default function Home({ breakingNews }: Props) {
   const Previews = () => {
     return newsSources && (
       <div>
-              <NewsPreview radarData={publicationPreviews?.["wsj"]} fullMulti={publicationPreviews} />
+              <NewsPreview radarData={publicationPreviews?.["wsj"]} previews={publicationPreviews} />
 
       </div>
     );
@@ -146,17 +146,22 @@ export default function Home({ breakingNews }: Props) {
             </div>
             {data.length === 0 && <div>No results found...</div>}
             {data.map((datum, index_) => {
+              const shouldPresentPreview = index_ === 0 && publicationPreviews && Object.keys(publicationPreviews)?.length > 0
               return (
                 <Fragment key={datum.date}>
                   <div className="text-neutral-500 text-xl pb-2 sticky top-20 z-50 bg-white">
                     <Divider>
                       <span className="text-[#2E3646] text-xl font-medium">
                         {formatDateString(datum.date)} EST
-                        {index_ === 0 && publicationPreviews && Object.keys(publicationPreviews)?.length > 0 && <Popover placement="bottom" content={publicationPreviews && newsSources && <NewsPreview fullMulti={publicationPreviews} />} arrow={mergedArrow}>
-                        <Button className="ml-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                        </svg></Button>
-                      </Popover>}
+                        {shouldPresentPreview && (
+                          <Popover placement="bottom" content={publicationPreviews && newsSources && <NewsPreview previews={publicationPreviews} />} arrow={mergedArrow}>
+                            <Button className="ml-3">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                              </svg>
+                            </Button>
+                          </Popover>
+                        )}
                       </span>
                     </Divider>
                   </div>
