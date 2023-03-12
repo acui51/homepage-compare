@@ -93,14 +93,6 @@ export default function Home({ breakingNews }: Props) {
     return showArrow;
   }, [showArrow, arrowAtCenter]);
 
-  const Previews = () => {
-    return newsSources && (
-      <div>
-              <NewsPreview radarData={publicationPreviews?.["wsj"]} previews={publicationPreviews} />
-
-      </div>
-    );
-  }
 
   return (
     <main className="flex flex-col items-center px-24 min-h-screen">
