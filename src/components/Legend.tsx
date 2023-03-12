@@ -9,24 +9,29 @@ export type LegendProps = {
         label: string;
         color: PolygonColor;
     }[];
+    winningTerm: string;
 };
 
-export default function Legend({ items }: LegendProps) {
+export default function Legend({ items, winningTerm }: LegendProps) {
+  // two column layout with tailwind
   return (
-    <div className='flex flex-row align-baseline'>
-      <div className="flex flex-col" style={{marginTop: -80}}>
-        {items.map((item, i) => (
-          // use tailwindcss to style legend
-        <div key={i.toString()} className="flex items-center">
-          <div className="w-4 h-4 mr-2 rounded-sm" style={{backgroundColor: item.color.fill}}></div>
-          <div>{item.label}</div>
+    <div className="flex flex-col max-w-md" style={{marginTop: -80}}>
+      <div className="flex flex-row justify-between">
+        <div className="flex flex-col">
+          {items.map((item, i) => (
+            <div key={i.toString()} className="flex flex-row">
+              <div
+                className="w-4 h-4 rounded-full"
+                style={{ backgroundColor: item.color.fill }}
+              />
+              <div className="ml-2">{item.label}</div>
+            </div>
+          ))}
         </div>
-      ))}
+        <div className="flex flex-col flex-1/2">
+          <p className='max-w-sm'>In publishing and graphic design, {winningTerm} Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content.</p>
+        </div>
       </div>
-      {/* another div to take up the rest of the horizontal space */}
-      <div className="flex flex-col">
-        <p>dsfojh</p>
-      </div>
-      </div>
-    );
+    </div>
+  );
 }

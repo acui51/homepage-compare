@@ -210,7 +210,7 @@ export default function NewsPreview({ fullMulti, margin = defaultMargin, colors 
         </Group>
         
       </svg>
-      <Legend items={legendItems}/>
+      <Legend items={legendItems} winningTerm={termOfMaxProminence(fullMulti["the-washington-post"]).name} />
     </div>
   )
 }
