@@ -64,7 +64,7 @@ export type NewsPreviewProps = {
     fullMulti: {
       [key: string]: RadarProminence[]
     }
-    colors: {
+    colors?: {
       [key: string]: PolygonColor
     }
 }
