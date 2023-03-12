@@ -13,7 +13,6 @@ import { HomepageNewsRow } from "@/hooks/useHomepageNews";
 import BreakingNews from "@/components/BreakingNews";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 import type { SearchType } from "@/hooks/useHomepageNews";
-import OverlayNewsPreview from "@/components/OverlayNewsPreview";
 
 type DateRange = {
   lowerBoundDate: string;
