@@ -1,10 +1,15 @@
 import { playfair } from "@/pages/_app";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import Link from "next/link";
+import { Alert } from "antd";
 
 export default function LandingPage() {
   return (
     <main className="flex flex-col items-center md:px-24 px-4 min-h-screen">
+      <Alert
+        message="UPDATE: April 23, 2023. We are no longer maintaining this project and therefore as a result, we have shut it down. Please contact me for more details: cuialix@gmail.com"
+        type="error"
+      />
       <div className="flex flex-col items-center mt-16">
         <p className="text-xs text-[#2E3646] mb-2">
           A NEWS COMPARISON DASHBOARD
@@ -42,7 +47,9 @@ export default function LandingPage() {
             </p>
             <ArrowRightOutlined
               style={{
-                color: "#5F6D7E", marginTop: "20px", fontSize: "14px"
+                color: "#5F6D7E",
+                marginTop: "20px",
+                fontSize: "14px",
               }}
             />
           </div>
